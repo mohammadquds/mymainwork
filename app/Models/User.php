@@ -24,6 +24,10 @@ class User extends Authenticatable
         'email',
         'password',
     ];
+    function activity_logs()
+    {
+        return $this->hasMany(Activity_logs::class, 'user_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
