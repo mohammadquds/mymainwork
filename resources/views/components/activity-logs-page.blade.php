@@ -32,5 +32,8 @@
                 @endforeach
             </tbody>
         </table>
+        <div class="mt-4">
+            {{ $activity_logs->links() }}
+        </div>
     </div>
 </div>
