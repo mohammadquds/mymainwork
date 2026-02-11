@@ -28,6 +28,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Activity_logs::class, 'user_id');
     }
+    function subscriptions()
+    {
+        return $this->hasMany(Subscriptions::class, 'user_id');
+    }
 
     /**
      * The attributes that should be hidden for serialization.
