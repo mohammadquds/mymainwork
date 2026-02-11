@@ -9,7 +9,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/activity-logs', function () {
-    $activity_logs = Activity_logs::with('user')->latest()->paginate(2);
+    $activity_logs = Activity_logs::with('user')->latest()->paginate(1);
     return view('components.activity-logs-page', compact('activity_logs'));
 })->name('activity-logs');
 
