@@ -2,41 +2,40 @@
 
 namespace Database\Seeders;
 
-use Carbon\Carbon;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Activity_logs;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
+use Illuminate\Support\Arr;
+
 class ActivityLogSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $user = User::create([
-            'name' => 'omar',
-            'email' => 'omarmetwaly888@gmail.com',
-            'password' => Hash::make('12345678'),
-        ]);
-        Activity_logs::create([
-            'user_id' => $user->id,
-            'user_role' => 'admin',
-            'user_email' => $user->email,
-            'activity_type' => 'تسجيل دخول',
-            'description' => 'قام الموظف بتسجيل الدخول للنظام',
-            'section' => 'لوحة التحكم',
-            'date' => Carbon::now(),
-        ]);
+        // تأكد من وجود مستخدمين في النظام أو أنشئ مستخدمين جدد
+        $users = User::all();
+        
+        if ($users->isEmpty()) {
+            $users = User::factory(3)->create(); // إنشاء 3 مستخدمين إذا لم يوجد أحد
+        }
 
-        Activity_logs::create([
-            'user_id' => $user->id,
-            'user_role' => 'admin',
-            'user_email' => $user->email,
-            'activity_type' => 'تعديل بيانات',
-            'description' => 'تعديل الملف الشخصي',
-            'section' => 'الإعدادات',
-            'date' => Carbon::now()->subHours(2),
-        ]);    }
+        // قائمة بالأدوار والأنشطة لجعل البيانات متنوعة
+        $roles = ['User', 'Admin', 'Super Admin'];
+        $activities = ['تسجيل دخول', 'تعديل ملف', 'حذف مستخدم', 'تحديث إعدادات', 'إضافة طلب'];
+        $sections = ['لوحة التحكم', 'الإعدادات', 'المستخدمين', 'التقارير'];
+
+        for ($i = 1; $i <= 50; $i++) {
+            $user = $users->random(); // اختيار مستخدم عشوائي من الموجودين
+            
+            Activity_logs::create([
+                'user_id'       => $user->id,
+                'user_role'     => Arr::random($roles), // اختيار دور عشوائي
+                'user_email'    => $user->email,
+                'activity_type' => Arr::random($activities),
+                'description'   => 'قام المستخدم بإجراء عملية تجريبية رقم ' . $i,
+                'section'       => Arr::random($sections),
+                'date'          => Carbon::now()->subMinutes(rand(1, 1000)), // تواريخ متنوعة
+            ]);
+        }
+    }
 }
