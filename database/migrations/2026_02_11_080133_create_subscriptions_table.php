@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('type');
             $table->string('email')->unique(); 
             $table->string('phone_number');
-            $table->string('Commercial_Registration_Number');
-            $table->string('vat_number');
+            $table->string('Commercial_Registration_Number')->nullable();
+            $table->string('vat_number')->nullable();
             $table->string('status');
-            $table->string('duration');
+            $table->string('duration')->nullable();
             $table->dateTime('start_date')->nullable();
             $table->dateTime('end_date')->nullable();
             
