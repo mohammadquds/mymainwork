@@ -3,12 +3,13 @@
 namespace App\Livewire;
 use App\Models\Subscriptions;
 use App\Models\Activity_logs;
+use App\Models\User;
 
 use Livewire\Component;
 
 class RegistrationPage extends Component
 {
-    public $company_name, $type, $email, $phone_number , $Commercial_Registration_Number, $vat_number;
+    public $company_name, $type, $email, $phone_number , $Commercial_Registration_Number, $vat_number , $full_name;
 
     protected $rules = [
         'company_name' => 'required|min:3',
@@ -22,8 +23,14 @@ class RegistrationPage extends Component
     public function register()
     {
         $this->validate();
+        // إنشاء المستخدم الجديد
+        User::create([
+            'name' => $this->full_name,
+            'email' => $this->email,
+            'password' => bcrypt('defaultpassword'),
+        ]);
 
-        // 1. إنشاء الاشتراك الفعلي
+        // إنشاء طلب الاشتراك
         $sub = Subscriptions::create([
             'company_name' => $this->company_name,
             'type' => $this->type,
@@ -35,7 +42,7 @@ class RegistrationPage extends Component
             'vat_number' => $this->vat_number,
         ]);
 
-        // 2. تسجيل نشاط جديد تلقائياً
+        // تسجيل النشاط
         Activity_logs::create([
             'user_role' => 'Guest',
             'user_email' => $this->email,
@@ -46,6 +53,7 @@ class RegistrationPage extends Component
         ]);
 
         session()->flash('message', 'تم إرسال طلبك بنجاح!');
+        return redirect()->route('homePage');
         
     }
     public function render()

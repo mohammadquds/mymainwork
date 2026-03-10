@@ -1,0 +1,99 @@
+{
+    "_comment1": "هذا الجزء خاص الاشتراكات و بالصفحة الرئيسية",
+    "Display screen licenses":"رخص شاشات العرض",
+
+    
+    "_comment2": "هذا الجزء خاص بالصفحة الاشتراكات",
+    "Duration":"المدة",
+    "Subscription Number":"رقم الاشتراك",
+    "License":"رخصة شاشة عرض",
+
+
+    "_comment3": "هذا الجزء خاص بالصفحة الشاشات",
+    "Back":"الرجوع",
+    "Settings":"اعدادات الشاشة",
+    "Screen Title":"عنوان الشاشة",
+    "Screen Edit":"تعديل الشاشة",
+    "Playlists displayed on screen":"قوائم التشغيل المعروضة على الشاشة",
+    "Connect Playlist":"ربط قائمة تشغيل",
+    "Play Screen":"تشغيل الشاشة",
+    "Turning off this option means that no content will appear on the screen":"ايقاف هذه الخيار يعني انه لن يظهر محتوى على الشاشة",
+    "Control the screen using the remote.":"التحكم بالشاشة من خلال الريموت",
+    "Automatic screen refresh":"تحديث الشاشة بشكل تلقائي",
+    "Add Time":"اضف وقت",
+    "Background Color":"لون الخلفية",
+    "Degree of Rotation":"درجة الميلان",
+
+
+    "_comment4": "هذا الجزء خاص بالصفحة المحتوى",
+    "Edit Image":"تعديل الصورة",
+    "Image Information":"معلومات الصورة",
+    "Download Image":"تنزيل الصورة",
+    "See where this image is being used":"شاهد أين يتم استخدام هذه الصورة",
+    "Image Settings":"اعدادات الصورة",
+    "Image Title":"عنوان الصورة",
+    "Image Details":"تفاصيل الصورة",
+    "Inactive means that this image will not be displayed on any screen":"غير نشط تعني انه سيتم عدم عرض هذه الصورة على اي شاشة",
+
+
+    "_comment5": "هذا الجزء خاص بالصفحة المجموعات",
+    "Edit Group":"تعديل المجموعة",
+    "Screens added to this group":" الشاشات المضافة في هذه المجموعة",
+    "Connect with Screen":"ربط مع شاشة",
+    "Group Settings":"اعدادات المجموعة",
+    "Group Name":"عنوان المجموعة",
+    "Group Color":"لون المجموعة",
+
+
+    "_comment6": "هذا الجزء خاص بالصفحة قائمة التشغيل",
+    "Edit Playlist":"تعديل قائمة التشغيل",
+    "Content added to the playlist":"المحتوى المضاف في قائمة التشغيل",
+    "Add Content":"اضف محتوى",
+    "Total Media":"مجموع الوسائط",
+    "Total Screens":"مجموع الشاشات",
+    "Connect to Screen":"اربط مع شاشة",
+    "Screens that display the playlist":"الشاشات التي تعرض قائمة التشغيل",
+    "Playlist Settings":"اعدادات قائمة التشغيل",
+    "Playlist Name":"عنوان القائمة ",
+    "Without an expiration date":"بدون تاريخ انتهاء",
+    "From Date":"التاريخ من",
+    "To Date":"التاريخ إلى",
+    "24 Hour Play":"تشغيل 24 ساعة",
+    "Time from":"الوقت من",
+    "Time to":"الوقت إلى",
+    "Active days":"أيام التشغيل",
+
+
+    "_comment7": "هذا الجزء خاص بالصفحة  المحتوي",
+    "YouTube Videos":"مقاطع اليوتيوب",
+    "There are no media yet":"لا توجد وسائط حتى الآن",
+
+
+    "_comment8": "هذا الجزء خاص رسالة الحذف",
+    "Are you sure you want to delete ?":"هل أنت متأكد أنك تريد حذف ؟",
+    "Data cannot be recovered once deleted":"لا يمكن استعادة البيانات في حال حذفها",
+    
+
+    "_comment9": "هذا الجزء خاص  زر التواصل مع الدعم الفني",
+    "How can we help you?":"كيف يمكننا مساعدتك؟",
+    "Contact our customer service":"تواصل مع خدمة العملاء لدينا",
+    "Phone Number":"رقم الاتصال",
+    "Email Address":"البريد الإلكتروني",
+    "WhatsApp Number":"واتساب",
+
+
+    "_comment10": "هذا الجزء خاص  بالموظفين",
+    "Add new employee":"أضف موظف جديد",
+    "Employee Name":"اسم الموظف",
+    "Please enter the employee's name":" الرجاء كتابة اسم الموظف",
+    "Employee Email":"البريد الإلكتروني  الخاص بالموظف",
+    "Please enter the employee's email address":" الرجاء كتابةالبريد الإلكتروني الخاص ب الموظف",
+    "Email":"البريد",
+    "Date Added":"تاريخ الأضافة",
+    "Block":"حظر",
+    "Unblock":"فك الحظر",
+    "Confirmation of account status change":"تأكيد تعديل حاله الحساب",
+    "Are you sure you want to change the employee's account status?":"هل انت متأكد انك تريد تغغير حالة حساب الموظف؟",
+    "Confirm":"تأكيد"
+
+}

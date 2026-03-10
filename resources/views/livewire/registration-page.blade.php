@@ -17,6 +17,15 @@
                             </div>
                         </div>
 
+                        <div class="sm:col-span-4">
+                            <label class="block text-sm font-semibold text-gray-900">Full Name</label>
+                            <div class="mt-2">
+                                <input type="text" wire:model="full_name" placeholder="e.g., John Doe" 
+                                    class="block w-full rounded-lg border-gray-300 py-2.5 text-gray-900 shadow-sm focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600 border px-4">
+                                @error('full_name') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                            </div>
+                        </div>
+
                         <div class="sm:col-span-3">
                             <label class="block text-sm font-semibold text-gray-900">Subscription Type</label>
                             <div class="mt-2">
