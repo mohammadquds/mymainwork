@@ -19,7 +19,7 @@ return new class extends Migration
             'user.view', 'user.create', 'user.edit', 'user.delete',
             'role.view', 'role.create', 'role.edit', 'role.delete',
             'permission.view', 'permission.assign',
-            'admin.user.view','subscription.view',
+            'admin.user.view','subscription.view', 'subscription.unactive.view',
         ];
 
         foreach ($permissions as $permission) {

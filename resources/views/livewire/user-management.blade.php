@@ -33,8 +33,10 @@
                     <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">البريد الإلكتروني</th>
                     <th class="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">الصلاحية </th>
                     <th class="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">المشرف</th>
-   @can('user.edit')<th class="hidden md:table-cell  px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"> الإعدادات</th>@endcan
-                   <th class="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"> الإشتراك</th>
+                    @can('user.edit')
+                    <th class="hidden md:table-cell  px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"> الإعدادات</th>
+                    @endcan
+                 @can('subscription.unactive.view')  <th class="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"> الإشتراك</th>@endcan
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -73,21 +75,21 @@
                         </td>
 
 
-                        <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td class="hidden md:table-cell px-6 py-4 whitespace-nowrap text-sm font-medium">
                             @can('user.edit')
                                 <button wire:click.stop="edit({{ $user->id }})"
                                     class="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-200 mr-2">
                                     تعديل
                                 </button>
                             @endcan
+                        @can('user.delete')
                             |
-                            @can('user.delete')
                             <button wire:click.stop="delete({{ $user->id }})" wire:confirm="Are you sure you want to delete this user?"
                                 class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-200">
                                 حذف
                             </button>
-                            @endcan
-                        </td>
+                        @endcan
+                    </td>
 
 
                         <td>
@@ -106,14 +108,14 @@
                                 </button>
                                  @endcan
 
-
+                                @can('subscription.unactive.view')
                                 <button
                                     wire:click.stop="cancelSubscription({{ $user->id }})"
                                     wire:confirm="هل أنت متأكد من إغلاق النظام عن هذا المستخدم؟"
                                     class="bg-red-600 text-white px-3 py-1 rounded-lg text-xs font-bold hover:bg-red-800" >
                                                 إلغاء التفعيل
                                 </button>
-
+                                @endcan
                             </div>
                         </td>
 
@@ -279,22 +281,29 @@
 
             <hr class="border-gray-100 dark:border-gray-700">
 
-            @can('subscription.view')
-            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-100 dark:border-gray-600">
-                <span class="block text-sm font-bold text-gray-800 dark:text-white mb-3">إدارة الإشتراك:</span>
 
+            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-xl border border-gray-100 dark:border-gray-600">
+            @can('subscription.unactive.view')
+                <span class="block text-sm font-bold text-gray-800 dark:text-white mb-3">إدارة الإشتراك:</span>
+            @endcan
+        <div class="flex gap-2">
+            @can('subscription.view')
                 <input type="date" wire:model="selectedDates.{{ $selectedUserDetails->id }}" class="w-full mb-3 border border-gray-300 rounded-lg px-3 py-2 text-sm text-black">
 
-                <div class="flex gap-2">
+
                     <button wire:click="grantAccess({{ $selectedUserDetails->id }})" class="flex-1 bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-green-700 transition">
                         تفعيل
                     </button>
+            @endcan
+
+            @can('subscription.unactive.view')
                     <button wire:click="cancelSubscription({{ $selectedUserDetails->id }})" wire:confirm="هل أنت متأكد من إغلاق النظام عن هذا المستخدم؟" class="flex-1 bg-red-600 text-white px-3 py-2 rounded-lg text-sm font-bold hover:bg-red-800 transition">
                         إلغاء التفعيل
                     </button>
+            @endcan
                 </div>
             </div>
-            @endcan
+
 
         </div>
 

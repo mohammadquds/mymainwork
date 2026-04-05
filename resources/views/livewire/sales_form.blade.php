@@ -96,19 +96,6 @@
                 <span class="text-2xl font-black">{{ number_format($this->total, 2) }} SAR</span>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-               <label class="block text-sm font-bold text-gray-700">اسم المحل / الموظف</label>
-            <div class="grid grid-cols-2 gap-2 mt-1">
-                <div>
-                    <input type="text" wire:model="store_name" placeholder="المحل" class="w-full border border-black rounded-lg shadow-sm">
-                    @error('store_name') <span class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
-                </div>
-                <div>
-                    <input type="text" wire:model="employee_name" placeholder="الموظف" class="w-full border border-black rounded-lg shadow-sm">
-                    @error('employee_name') <span class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
-                </div>
-                </div>
 
              <div x-data="cameraHandler()">
                    @error('product_image') <span class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
@@ -143,8 +130,30 @@
         @endif
     </div>
 
+
+
+         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">الموظف</label>
+                    <input wire:model="employee_name"  type="text"    readonly
+                            class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-xl text-gray-500 cursor-not-allowed focus:outline-none">
+                    @error('employee_name') <span class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
+                </div>
+
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-1">اسم المحل</label>
+                    <input wire:model="store_name"  type="text"  readonly
+                            class="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-xl text-gray-500 cursor-not-allowed focus:outline-none">
+                    @error('store_name') <span class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
+                </div>
             </div>
-        </div>
+
+
+
+
+
+
+</div>
 
      <div class="bg-gray-50 px-8 py-4 flex justify-end gap-4 border-t sticky bottom-0 z-10">
                         <button type="button" wire:click="$set('showModal', false)" class="text-gray-500 font-bold px-6 py-2 hover:bg-gray-200 rounded-lg">إلغاء</button>
@@ -156,52 +165,53 @@
 
 </div>
 @endif
-<script>
-function cameraHandler() {
-    return {
-        showCamera: false,
-        stream: null,
+        <script>
+        function cameraHandler() {
+            return {
+                showCamera: false,
+                stream: null,
 
-        async startCamera() {
-            this.showCamera = true;
-            try {
-                this.stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment" }, // This opens the BACK camera
-                    audio: false
-                });
-                this.$refs.video.srcObject = this.stream;
-            } catch (err) {
-                alert("تأكد من إعطاء صلاحية الكاميرا للمتصفح");
-                this.showCamera = false;
+                async startCamera() {
+                    this.showCamera = true;
+                    try {
+                        this.stream = await navigator.mediaDevices.getUserMedia({
+                            video: { facingMode: "environment" }, // This opens the BACK camera
+                            audio: false
+                        });
+                        this.$refs.video.srcObject = this.stream;
+                    } catch (err) {
+                        alert("تأكد من إعطاء صلاحية الكاميرا للمتصفح");
+                        this.showCamera = false;
+                    }
+                },
+
+                takePhoto() {
+                    const video = this.$refs.video;
+                    const canvas = this.$refs.canvas;
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    const context = canvas.getContext('2d');
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    canvas.toBlob((blob) => {
+                        const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
+
+                        // This magic line sends the photo to your $product_image property
+                        @this.upload('product_image', file, (success) => {
+                            this.stopCamera();
+                        });
+                    }, 'image/jpeg', 0.8);
+                },
+
+                stopCamera() {
+                    if (this.stream) {
+                        this.stream.getTracks().forEach(track => track.stop());
+                    }
+                    this.showCamera = false;
+                }
             }
-        },
-
-        takePhoto() {
-            const video = this.$refs.video;
-            const canvas = this.$refs.canvas;
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            canvas.toBlob((blob) => {
-                const file = new File([blob], "photo.jpg", { type: "image/jpeg" });
-
-                // This magic line sends the photo to your $product_image property
-                @this.upload('product_image', file, (success) => {
-                    this.stopCamera();
-                });
-            }, 'image/jpeg', 0.8);
-        },
-
-        stopCamera() {
-            if (this.stream) {
-                this.stream.getTracks().forEach(track => track.stop());
-            }
-            this.showCamera = false;
         }
-    }
-}
-</script>
-</div>
+        </script>
+        </div>
 
+</div>

@@ -17,6 +17,7 @@ class RegisterAccount extends Component
     public $sign_password;
     public $sign_password_confirmation;
     public $company_name;
+    public $isCompanyLocked = false;
 
 
 
@@ -33,14 +34,26 @@ class RegisterAccount extends Component
     public $admin_id = null;
 
 
- public function mount()
+
+
+    public function mount()
     {
-        // 1. Grab the short code directly from the URL (no decryption needed!)
+        // 1. Grab the short code from the URL
         $this->admin_id = request()->query('ref');
 
         // 2. If a code exists, switch to the Register form automatically
         if ($this->admin_id) {
             $this->isLoginMode = true;
+
+            // --- NEW: Find the Admin and lock their company name ---
+            $admin = \App\Models\User::where('invite_code', $this->admin_id)->first();
+
+            if ($admin && $admin->company_name) {
+                // Auto-fill the input with the Admin's company
+                $this->company_name = $admin->company_name;
+                // Lock the field so the user cannot change it
+                $this->isCompanyLocked = true;
+            }
         }
     }
 public function toggleMode()
@@ -116,6 +129,7 @@ public function toggleMode()
 
 
 
+    
 // log in page
 
  public function loginUser()

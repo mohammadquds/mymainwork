@@ -8,6 +8,7 @@ use Livewire\WithFileUploads;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
 
 class SalesForm extends Component
 {
@@ -38,7 +39,7 @@ use WithFileUploads;
 
         // 2. Format the Karat (e.g., "21" becomes "21K")
         $this->karat = $karat;
-        
+
         $this->updateMarketPrice($this->karat);
 
         // 3. Open the modal
@@ -46,6 +47,9 @@ use WithFileUploads;
     }
     public function mount()
     {
+            $this->employee_name =Auth::user()->name;
+            $this->store_name = Auth::user()->company_name;
+
         // --- NEW: Catch data from the Quick Calculator ---
         if (request()->has('weight')) {
             $this->weight = request()->query('weight');
@@ -58,6 +62,8 @@ use WithFileUploads;
             $this->updateMarketPrice($this->karat);
         }
     }
+
+
 
 
 
@@ -98,13 +104,16 @@ use WithFileUploads;
             }
         });
     }
-
+ 
 
 
     #[On('open-sales-form')]
     public function openModal()
     {
         $this->reset(); // Clears any old data from the last time it was opened
+
+        $this->employee_name = Auth::user()->name;
+        $this->store_name = Auth::user()->company_name;
         $this->karat = 21; // Reset default
         $this->showModal = true;
     }
