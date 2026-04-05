@@ -186,27 +186,10 @@ class UserManagement extends Component
 
 
 
+
     // send emails invitation?
     public $showInviteModal = false;
     public $inviteEmail = '';
-
-    // public function sendInvite()
-    // {
-    //     $this->validate(['inviteEmail' => 'required|email']);
-
-    //     // Generate the unique link
-    //     $encryptedId = encrypt(auth()->id());
-    //     $url = url('/register-account?ref=' . $encryptedId);
-
-    //     // Send the email
-    //     Mail::to($this->inviteEmail)->send(new TestMail($url, auth()->user()->name));
-
-    //     $this->showInviteModal = false;
-    //     $this->inviteEmail = '';
-    //     session()->flash('status', 'Invitation sent successfully!');
-    // }
-
-
 
     public function sendInvite()
     {
@@ -266,23 +249,6 @@ class UserManagement extends Component
         session()->flash('message', "تم تفعيل الاشتراك لـ {$user->name} وجميع التابعين له بنجاح.");
     }
 
-
-
-    // public function cancelSubscription($userId)
-    // {
-    //     $user = User::findOrFail($userId);
-
-    //     // Set the date to yesterday so the middleware blocks them immediately
-    //     $user->update([
-    //         'end_date' => now()->subDay(),
-    //         'status' => 'expired'
-    //     ]);
-
-    //     // Refresh the component to show the change
-    //     $this->dispatch('subscription-updated');
-
-    //     session()->flash('message', "تم إغلاق اشتراك {$user->name} بنجاح.");
-    // }
 
     public function cancelSubscription($userId)
     {
