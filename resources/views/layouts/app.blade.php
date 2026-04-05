@@ -1,15 +1,22 @@
 <!DOCTYPE html>
-{{-- <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" 
-      dir="{{ app()->getLocale() == 'ar' ? 'rtl' : 'ltr' }}" class="bg-white"> --}}
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
 
-    <title>{{$title ?? "omar"}}</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  {{$slot}}
+@auth
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+
+<livewire:nav-bar/>
+
+    <main class="mx-auto max-w-7xl py-8 sm:px-6 lg:px-8">
+@endauth
+        {{ $slot }}
+    </main>
+    @fluxScripts
+
 </body>
 </html>

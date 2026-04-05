@@ -1,23 +1,51 @@
 <?php
 
+
 use App\Livewire\HomePage;
 use App\Livewire\SubscriptionPage;
 use App\Models\Activity_logs;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\ActivityLogsPage;
 use App\Livewire\RegistrationPage;
+use App\Livewire\ProfileSettings;
+use App\Livewire\RegisterAccount;
+use App\Livewire\UserManagement;
+use App\Livewire\RoleManagement;
+use App\Livewire\SalesForm;
+// Kill the old default URLs by forcing them to redirect to your new custom root page (/)
+Route::redirect('/login', '/');
+Route::redirect('/register', '/');
+
+Route::redirect('/dashboard', '/homePage'); // Or wherever you want old dashboard traffic to go
 
 Route::get('/', function () {
-    return view('welcome');
+   return redirect('/register-account');
 })->name('home');
 
-Route::get('/activity-logs', ActivityLogsPage::class)->name('activity-logs');
-Route::get('/homePage', HomePage::class)->name('home-page');
-Route::get('/subscription', SubscriptionPage::class)->name('subscription-page');
-Route::get('/registration', RegistrationPage::class)->name('registration-page');
 
-Route::view('dashboard', 'dashboard')
-    ->middleware(['auth', 'verified'])
-    ->name('dashboard');
 
+Route::middleware('guest')->group(function () {
+
+ Route::get('/register-account', RegisterAccount::class)->name('register-account.page');
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
+Route::get('/activity-logs', ActivityLogsPage::class)->name('activity-logs.page');
+Route::get('/homePage', HomePage::class)->name('home.page');
+Route::get('/sales-form', SalesForm::class)->name('sales-form.page');
+Route::get('/subscription', SubscriptionPage::class)->name('subscription.page');
+Route::get('/registration', RegistrationPage::class)->name('registration.page');
+Route::get('/profile', ProfileSettings::class)->name('profile.page');
+Route::get('/users', UserManagement::class)->middleware('permission:user.view')->name('user.page');
+Route::get('/roles', RoleManagement::class)->middleware('permission:role.view')->name('role.page');
+
+
+// This is the missing piece
+Route::get('/subscription-expired', function () {
+    return view('errors.subscription-expired');
+})->name('subscription.expired');
+
+
+});
 require __DIR__.'/settings.php';

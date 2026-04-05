@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
@@ -12,7 +13,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +24,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'start_date', 
+        'end_date',
+        'status',
+        'admin_id',
+        'invite_code',
+        'company_name',
     ];
     function activity_logs()
     {
@@ -57,6 +64,39 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    //////
+ protected $casts = [
+    'email_verified_at' => 'datetime',
+    'password' => 'hashed',
+    'start_date' => 'date', // Make sure this is here
+    'end_date' => 'date',   // Make sure this is here
+];
+
+
+// Gets the Admin who created this user
+public function manager()
+{
+    return $this->belongsTo(User::class, 'admin_id');
+}
+
+// Gets all the regular users this Admin created
+public function teamMembers()
+{
+    return $this->hasMany(User::class, 'admin_id');
+}
+
+
+// Helper to check if they are still active
+public function isSubscribed()
+{
+    if ($this->hasRole('Super Admin')) return true; // Admin never gets blocked
+
+    return $this->end_date && $this->end_date->isFuture();
+}
+
+///////
+
 
     /**
      * Get the user's initials

@@ -1,0 +1,147 @@
+<?php
+
+namespace App\Livewire;
+
+use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Http\Request;
+use App\Models\User;
+
+class RegisterAccount extends Component
+{
+
+  // signin component
+    public $name;
+    public $sign_email;
+    public $sign_password;
+    public $sign_password_confirmation;
+    public $company_name;
+
+
+
+
+    // login component
+    public $log_email;
+    public $log_password;
+    public $remember = false;
+
+    // toggle that mix two php and blade together
+    public $isLoginMode = false;
+
+    // --- NEW: Variable to hold the Admin's ID ---
+    public $admin_id = null;
+
+
+ public function mount()
+    {
+        // 1. Grab the short code directly from the URL (no decryption needed!)
+        $this->admin_id = request()->query('ref');
+
+        // 2. If a code exists, switch to the Register form automatically
+        if ($this->admin_id) {
+            $this->isLoginMode = true;
+        }
+    }
+public function toggleMode()
+{
+    $this->resetValidation();
+    $this->reset(['name', 'sign_email', 'sign_password', 'sign_password_confirmation','company_name', 'log_email', 'log_password']);
+    $this->isLoginMode = !$this->isLoginMode;
+}
+
+
+
+  // sign in page
+    public function registerUser(){
+         $this->validate([
+            'name' => 'required | max:255',
+            'company_name' => 'required | max:255',
+            'sign_email' => 'required|email|unique:users,email|max:255',
+            'sign_password' => 'required|confirmed|min:8|max:255'
+        ]);
+
+        $admin = null;
+        $isSuperAdminInvite = false;
+
+        if ($this->admin_id) {
+             $admin = User::where('invite_code', $this->admin_id)->first();
+
+            // Check if the person who invited them is a Super Admin
+            if ($admin && $admin->hasRole('Super Admin')) {
+                $isSuperAdminInvite = true;
+            }
+        }
+
+        $startDate = null;
+        $endDate = null;
+        $status = 'active';
+
+        if ($isSuperAdminInvite) {
+            $startDate = now();
+            $endDate = now()->addDays(3);
+        } elseif ($admin) {
+
+            $startDate = $admin->start_date;
+            $endDate = $admin->end_date;
+            $status = $admin->status ?? 'active';
+        }
+
+        // 3. CREATE THE USER
+        $user = User::create([
+            'name' => $this->name,
+            'email' => $this->sign_email,
+            'company_name' => $this->company_name,
+            'password' => Hash::make($this->sign_password),
+            'admin_id' => $admin ? $admin->id : null,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'status' => $status,
+        ]);
+
+        // 4. DYNAMIC ROLE ASSIGNMENT
+        if ($isSuperAdminInvite) {
+            // If invited by a Super Admin, they become an Admin
+            $user->assignRole('Admin');
+        } else {
+            // If invited by anyone else (or no one), they become a standard user
+            $user->assignRole('user');
+        }
+
+        Auth::login($user);
+        session()->flash('congrats','welcome');
+
+        return redirect('/homePage');
+    }
+
+
+
+// log in page
+
+ public function loginUser()
+    {
+        $this->validate([
+            'log_email' => 'required|email|max:255',
+            'log_password' => 'required|max:255'
+        ]);
+
+        // Map the prefixed variables back to standard Auth keys
+        $credentials = [
+            'email' => $this->log_email,
+            'password' => $this->log_password
+        ];
+
+        if (Auth::attempt($credentials, $this->remember)) {
+            session()->regenerate();
+            return redirect('/homePage');
+        }
+
+        $this->addError('log_email', 'The credentials do not match our records.');
+    }
+
+
+    public function render()
+    {
+        return view('livewire.register-account');
+    }
+}
