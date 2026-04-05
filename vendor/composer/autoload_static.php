@@ -721,6 +721,7 @@ class ComposerStaticInit9f2cf5bb456ab8e10c25c319589a1ad3
         'App\\Livewire\\HomePage' => __DIR__ . '/../..' . '/app/Livewire/HomePage.php',
         'App\\Livewire\\NavBar' => __DIR__ . '/../..' . '/app/Livewire/NavBar.php',
         'App\\Livewire\\ProfileSettings' => __DIR__ . '/../..' . '/app/Livewire/ProfileSettings.php',
+        'App\\Livewire\\QuickCalculator' => __DIR__ . '/../..' . '/app/Livewire/QuickCalculator.php',
         'App\\Livewire\\RegisterAccount' => __DIR__ . '/../..' . '/app/Livewire/RegisterAccount.php',
         'App\\Livewire\\RegistrationPage' => __DIR__ . '/../..' . '/app/Livewire/RegistrationPage.php',
         'App\\Livewire\\RoleManagement' => __DIR__ . '/../..' . '/app/Livewire/RoleManagement.php',

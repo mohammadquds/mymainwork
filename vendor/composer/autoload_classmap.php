@@ -18,6 +18,7 @@ return array(
     'App\\Livewire\\HomePage' => $baseDir . '/app/Livewire/HomePage.php',
     'App\\Livewire\\NavBar' => $baseDir . '/app/Livewire/NavBar.php',
     'App\\Livewire\\ProfileSettings' => $baseDir . '/app/Livewire/ProfileSettings.php',
+    'App\\Livewire\\QuickCalculator' => $baseDir . '/app/Livewire/QuickCalculator.php',
     'App\\Livewire\\RegisterAccount' => $baseDir . '/app/Livewire/RegisterAccount.php',
     'App\\Livewire\\RegistrationPage' => $baseDir . '/app/Livewire/RegistrationPage.php',
     'App\\Livewire\\RoleManagement' => $baseDir . '/app/Livewire/RoleManagement.php',
