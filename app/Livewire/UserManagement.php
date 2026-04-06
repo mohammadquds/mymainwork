@@ -26,6 +26,8 @@ class UserManagement extends Component
     public $isSelf = false;
     public $showDetailsModal = false;
     public ?\App\Models\User $selectedUserDetails = null;
+    public $company_name;
+    public $isCompanyLocked = false;
 
 
 
@@ -45,6 +47,7 @@ class UserManagement extends Component
     protected $rules = [
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
+        'company_name' => 'required | max:255',
         'password' => 'required|min:8',
         'selectedRoles' => 'array',
     ];
@@ -53,6 +56,7 @@ class UserManagement extends Component
     {
         $this->authorize('user.create');
         $this->resetForm();
+        $this->company_name = auth()->user()->company_name;
         $this->showModal = true;
     }
 
@@ -63,6 +67,7 @@ class UserManagement extends Component
         $this->userId = $user->id;
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->company_name = $user->company_name;
         $this->selectedRoles = $user->roles->pluck('name')->toArray();
         $this->isEditing = true;
         $this->showModal = true;
@@ -78,6 +83,7 @@ class UserManagement extends Component
             $this->authorize('user.edit');
             $this->rules['email'] = 'required|email|unique:users,email,' . $this->userId;
             $this->rules['password'] = 'nullable|min:8';
+            $this->rules['company_name'] = 'nullable';
         } else {
             $this->authorize('user.create');
         }
@@ -105,6 +111,7 @@ class UserManagement extends Component
         $userData = [
             'name' => $this->name,
             'email' => $this->email,
+            'company_name' => $this->company_name,
         ];
 
         if (!$this->isEditing || $this->password) {
@@ -176,15 +183,13 @@ class UserManagement extends Component
         $this->userId = null;
         $this->name = '';
         $this->email = '';
+        $this->company_name = '';
         $this->password = '';
         $this->selectedRoles = ['user'];
         $this->isEditing = false;
         $this->isSelf = false;
         $this->resetValidation();
     }
-
-
-
 
 
     // send emails invitation?
@@ -288,26 +293,33 @@ class UserManagement extends Component
         })->pluck('name');
 
 
-        // 3. Filter the Users list: Hide anyone who has a "forbidden" role
-        $query = User::with('roles');
+        // 1. Fetch Users, eagerly loading roles and relationships
+        $query = User::with(['roles', 'children.roles', 'manager']);
 
-        // --- NEW SECURITY FILTER ---
-        // If the logged-in user is NOT a Super Admin, only let them see themselves AND their children
-        if (!Auth::user()->hasRole('Super Admin')) {
-            $query->where(function ($q) {
-                $q->where('admin_id', Auth::id()) // Show users I created
-                    ->orWhere('id', Auth::id());    // Show my own account
+        // 2. Filter the view based on the logged-in user
+        if (Auth::user()->hasRole('Super Admin')) {
+
+            $query->whereDoesntHave('manager', function ($managerQuery) {
+                $managerQuery->whereHas('roles', function ($roleQuery) {
+                    $roleQuery->where('name', 'Admin');
+                });
             });
+        } else {
+
+            $query->where('id', Auth::id());
         }
-        // ---------------------------
+
+        // 3. Keep your forbidden roles filter
         if ($forbiddenRoleNames->isNotEmpty()) {
             $query->whereDoesntHave('roles', function ($q) use ($forbiddenRoleNames) {
                 $q->whereIn('name', $forbiddenRoleNames);
             });
         }
+
         $users = $query->orderByRaw('id = ? DESC', [Auth::id()])
             ->orderBy('created_at', 'asc')
             ->paginate(10);
+
 
 
         // 4. Filter the Roles dropdown: Only show roles I am allowed to assign
