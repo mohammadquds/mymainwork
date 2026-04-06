@@ -24,6 +24,46 @@
                     <a href="{{ route('subscription.page') }}" wire:navigate class="{{ request()->routeIs('subscription.page') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700' }} rounded-md px-3 py-2 text-sm font-medium transition">Subscriptions</a>
                     @endcan
                     <a href="{{ route('activity-logs.page') }}" wire:navigate class="{{ request()->routeIs('activity-logs.page') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700' }} rounded-md px-3 py-2 text-sm font-medium transition">Activity Logs</a>
+                    {{-- <a href="{{ route('activity-logs.page') }}" wire:navigate class="{{ request()->routeIs('activity-logs.page') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700' }} rounded-md px-3 py-2 text-sm font-medium transition">Activity Logs</a> --}}
+
+                    <div class="relative inline-block text-right" x-data="{ open: false }" @click.away="open = false">
+                        <button @click="open = !open" type="button" 
+                            class="flex items-center gap-2 text-gray-400 hover:bg-gray-700 hover:text-white p-2 rounded-md shadow-md transition-all duration-200 group">
+                            <span class="font-bold text-sm">اصدار التقارير</span>
+                            <svg class="w-4 h-4 transition-transform duration-200" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <div x-show="open" 
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            class="absolute left-0 mt-2 w-56 rounded-xl shadow-xl bg-white ring-1 ring-black ring-opacity-5 z-50 overflow-hidden">
+                            
+                            <div class="p-1">
+                                <a href="{{ route('reports.viewpdf') }}" target="_blank"
+                                    class="group flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors rounded-lg">
+                                    <span class="text-lg">👁️</span>
+                                    <span>(PDF)عرض تقرير</span>
+                                </a>
+
+                                <a href="{{ route('reports.generatepdf') }}" 
+                                    class="group flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-50 hover:text-red-700 transition-colors rounded-lg">
+                                    <span class="text-lg">📥</span>
+                                    <span>(PDF)تحميل تقرير</span>
+                                </a>
+
+                                <div class="my-1 border-t border-gray-100"></div>
+
+                                <button @click="$dispatch('triggerExcelModal'); open = false" 
+                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-50 hover:text-green-700 transition-colors rounded-lg text-right">
+                                    <span class="text-lg">📥</span>
+                                    <span>(Excel)نقل إلى إكسل</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

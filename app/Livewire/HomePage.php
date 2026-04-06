@@ -7,6 +7,8 @@ use App\Models\form;
 use Livewire\WithPagination;
 use Livewire\Attributes\On;
 use Maatwebsite\Excel\Facades\Excel;
+use ArPHP\I18N\Arabic;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Exports\SalesExport;
 
 
@@ -33,7 +35,52 @@ class HomePage extends Component
     //     $this->showCalculatorModal = false;
     // }
 
+    public function index(){
+        $pdf = form::all();
+        return view('reports.index', compact('pdf'));
+   }
+    public function viewPdf()
+    {
+        // جلب البيانات ومعالجتها للعربية
+        $pdfData = $this->prepareArabicData();
+        
+        $pdf = Pdf::loadView('pdf.report', ['pdf' => $pdfData]);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream('report.pdf');
+    }
 
+    public function generatePdf()
+    {
+        // جلب البيانات ومعالجتها للعربية
+        $pdfData = $this->prepareArabicData();
+        
+        $pdf = Pdf::loadView('pdf.report', ['pdf' => $pdfData]);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->download('gold_report.pdf');
+    }
+
+    // دالة مساعدة لمعالجة النصوص العربية في الجدول بالكامل
+    private function prepareArabicData()
+    {
+        $arabic = new Arabic();
+        $sales = form::all();
+
+        // نقوم بالمرور على كل سجل وتعديل النصوص العربية فيه
+        return $sales->map(function ($item) use ($arabic) {
+            // نستخدم utf8Glyphs لربط الحروف ببعضها
+            $item->customer_name = $arabic->utf8Glyphs($item->customer_name);
+            $item->staff_name = $arabic->utf8Glyphs($item->staff_name);
+            $item->shop_name = $arabic->utf8Glyphs($item->shop_name);
+            
+            // إذا كان نوع العملية (بيع/شراء) مكتوب بالعربي
+            if($item->type == 'sale') $item->display_type = $arabic->utf8Glyphs("بيع");
+            else $item->display_type = $arabic->utf8Glyphs("شراء");
+
+            return $item;
+        });
+    }
+
+    #[On('triggerExcelModal')]
     public function openExcelModal(){
         $this->showExcelModal =true;
     }

@@ -22,7 +22,8 @@ Route::get('/', function () {
    return redirect('/register-account');
 })->name('home');
 
-
+Route::get('/reports/viewpdf', [HomePage::class, 'viewPdf'])->name('reports.viewpdf');
+Route::get('/reports/generatePdf', [HomePage::class, 'generatePdf'])->name('reports.generatepdf');
 
 Route::middleware('guest')->group(function () {
 
