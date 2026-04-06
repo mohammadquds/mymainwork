@@ -20,8 +20,9 @@
                     @can('role.view')
                         <a href="{{ route('role.page') }}" wire:navigate class="{{ request()->routeIs('role.page') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700' }} rounded-md px-3 py-2 text-sm font-medium transition">Roles</a>
                     @endcan
-
+                    @can('subscription.unactive.view')
                     <a href="{{ route('subscription.page') }}" wire:navigate class="{{ request()->routeIs('subscription.page') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700' }} rounded-md px-3 py-2 text-sm font-medium transition">Subscriptions</a>
+                    @endcan
                     <a href="{{ route('activity-logs.page') }}" wire:navigate class="{{ request()->routeIs('activity-logs.page') ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700' }} rounded-md px-3 py-2 text-sm font-medium transition">Activity Logs</a>
                 </div>
             </div>

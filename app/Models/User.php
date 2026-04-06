@@ -24,7 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'start_date', 
+        'start_date',
         'end_date',
         'status',
         'admin_id',
@@ -94,6 +94,13 @@ public function isSubscribed()
 
     return $this->end_date && $this->end_date->isFuture();
 }
+
+// Add this to User.php
+    public function children()
+    {
+        // This tells Laravel: "Find all users where their admin_id matches my id"
+        return $this->hasMany(User::class, 'admin_id');
+    }
 
 ///////
 

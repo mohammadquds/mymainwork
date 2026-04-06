@@ -34,29 +34,9 @@ public function closeModal()
 }
 
 
-
-// the old one that shows only admin  in the subscription now its shows the admin and its child
-
-// public function render()
-// {
-//     // $this->authorize('subscription.view');
-//     // If Admin, see everyone. If User, see only yourself.
-//     $query = auth()->user()->hasRole('Super Admin')
-//              ? User::query()
-//              : User::where('id', auth()->id());
-
-//     $subscriptions = $query->whereNotNull('end_date')
-//                                 ->paginate(10);
-
-//     return view('livewire.subscription-page', [
-//         'subscriptions' => $subscriptions
-//     ])->layout('layoutscreen.app');
-// }
-// }
-
-
 public function render()
 {
+    $this->authorize('subscription.unactive.view');
     // 1. Start the query
     $query = \App\Models\User::query();
 
