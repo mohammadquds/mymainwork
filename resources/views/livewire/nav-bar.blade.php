@@ -74,7 +74,7 @@
                         </div>
                     </button>
 
-                    <div x-show="profileMenuOpen" x-transition style="display: none;" class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                    <div x-show="profileMenuOpen" x-transition style="display: none;" class="absolute left-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
                         <a href="{{ route('profile.page') }}" wire:navigate class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-bold">اعدادات الحساب</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
