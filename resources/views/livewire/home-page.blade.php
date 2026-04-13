@@ -169,182 +169,120 @@
     @endif
 
 
-    {{-- INVOICE DETAILS MODAL (Compact Single Column) --}}
+ {{-- INVOICE DETAILS MODAL (CSS Grid Layout Fix for iOS) --}}
     @if($showModal && $selectedSale)
-    <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm transition-all" dir="rtl">
-        <div class="bg-slate-50 w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
 
-            {{-- Modal Header --}}
-            <div class="bg-slate-900 p-4 md:p-5 flex justify-between items-center text-white shrink-0 border-b border-amber-500/20">
-                <div class="flex items-center gap-3">
+    {{-- 1. SINGLE WRAPPER: wire:key prevents Livewire scrambling --}}
+    <div wire:key="invoice-modal-{{ $selectedSale->id }}" class="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6" dir="rtl">
+
+        {{-- 2. MODAL CONTAINER: Changed to CSS Grid. '85dvh' adapts to the iPhone URL bar perfectly. --}}
+        <div class="bg-slate-50 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative grid"
+             style="height: 85dvh; max-height: 800px; grid-template-rows: auto minmax(0, 1fr) auto;">
+
+            {{-- 3. HEADER (Row 1) --}}
+            <div class="bg-slate-900 p-4 flex justify-between items-center text-white border-b border-amber-500/20 z-20">
+                <div class="flex items-center gap-2">
                     <div class="p-1.5 bg-slate-800 rounded-lg text-amber-400 border border-slate-700">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
-                    <div>
-                        <h3 class="text-lg font-black text-white">فاتورة <span class="text-amber-400 font-mono">#{{ $selectedSale->id }}</span></h3>
-                        <p class="text-[10px] text-slate-400 font-mono mt-0.5">{{ $selectedSale->created_at->format('Y-m-d H:i') }}</p>
-                    </div>
+                    <h3 class="text-sm font-black text-white">فاتورة <span class="text-amber-400 font-mono">#{{ $selectedSale->id }}</span></h3>
                 </div>
-                <button wire:click="closeModal" class="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 p-2 rounded-full transition-all border border-slate-700">
+                <button wire:click="closeModal" class="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-full border border-slate-700 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
 
-            {{-- Modal Body --}}
-            <div class="p-4 md:p-5 overflow-y-auto flex-1 flex flex-col items-center bg-slate-50/50">
+            {{-- 4. BODY (Row 2: minmax(0, 1fr) forces iOS to scroll this section instead of stretching it) --}}
+            <div class="overflow-y-auto w-full p-4 bg-slate-50/50 min-h-0" style="-webkit-overflow-scrolling: touch;">
 
-                <div class="w-full">
-
-                    {{-- Client Info (Compact) --}}
-                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm mb-4">
-                        <p class="text-lg font-black text-slate-900 mb-2">{{ $selectedSale->full_name }}</p>
-                        <div class="flex justify-between text-xs text-slate-600">
-                            <span class="flex gap-1.5"><strong class="text-slate-400">الهوية:</strong> <span class="font-mono font-medium">{{ $selectedSale->national_id }}</span></span>
-                            <span class="flex gap-1.5"><strong class="text-slate-400">النسخة:</strong> <span class="font-mono font-medium">{{ $selectedSale->id_version_number }}</span></span>
-                        </div>
-                    </div>
-
-                    {{-- Main Receipt Data --}}
-                    <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-
-                        <div class="space-y-1">
-                            {{-- Karat --}}
-                            <div class="flex items-center justify-between py-3 border-b border-slate-100">
-                                <div class="flex items-center gap-2.5 text-slate-500">
-                                    <svg class="w-4.5 h-4.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                                    <span class="font-bold text-sm">العيار</span>
-                                </div>
-                                <div class="font-black text-slate-900 text-lg">
-                                    {{ $selectedSale->karat }} <span class="text-xs text-amber-500 ml-0.5">K</span>
-                                </div>
-                            </div>
-
-                            {{-- Weight --}}
-                            <div class="flex items-center justify-between py-3 border-b border-slate-100">
-                                <div class="flex items-center gap-2.5 text-slate-500">
-                                    <svg class="w-4.5 h-4.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
-                                    <span class="font-bold text-sm">الوزن الصافي</span>
-                                </div>
-                                <div class="font-black text-slate-900 text-lg">
-                                    {{ $selectedSale->weight }} <span class="text-xs text-amber-500 ml-0.5">g</span>
-                                </div>
-                            </div>
-
-                            {{-- Price per gram --}}
-                            <div class="flex items-center justify-between py-3 border-b border-slate-100">
-                                <div class="flex items-center gap-2.5 text-slate-500">
-                                    <svg class="w-4.5 h-4.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
-                                    <span class="font-bold text-sm">سعر الجرام اليوم</span>
-                                </div>
-                                <div class="font-black text-slate-900 text-lg">
-                                    {{ number_format($selectedSale->sale_price, 2) }} <span class="text-xs text-slate-400 font-medium ml-0.5">SAR</span>
-                                </div>
-                            </div>
-
-                            {{-- Image Attachment --}}
-                            <div class="flex items-center justify-between py-3 border-b border-slate-100" x-data="{ showImageModal: false }">
-                                <div class="flex items-center gap-2.5 text-slate-500">
-                                    <svg class="w-4.5 h-4.5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                    <span class="font-bold text-sm">المرفقات</span>
-                                </div>
-                                <div>
-                                    @if($selectedSale->product_image)
-                                        <button @click="showImageModal = true" class="text-xs bg-amber-50 text-amber-600 hover:bg-amber-100 px-3 py-1.5 rounded-lg font-bold transition-colors flex items-center gap-1">
-                                            عرض الصورة
-                                            <svg class="w-3 h-3 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                        </button>
-
-                                        <template x-teleport="body">
-                                            <div x-show="showImageModal" x-cloak style="display: none;" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/90 backdrop-blur-md p-4 sm:p-8">
-                                                <div class="relative w-full max-w-3xl flex flex-col items-center animate-in fade-in zoom-in-95 duration-200" @click.away="showImageModal = false">
-                                                    <button @click="showImageModal = false" class="absolute -top-12 right-0 sm:-right-12 sm:top-0 bg-white/10 hover:bg-red-500 text-white p-2.5 rounded-full transition-colors backdrop-blur-md">
-                                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                                                    </button>
-                                                    <img src="{{ asset('storage/' . $selectedSale->product_image) }}" class="w-full rounded-2xl shadow-2xl border border-white/10 max-h-[85vh] object-contain">
-                                                </div>
-                                            </div>
-                                        </template>
-                                    @else
-                                        <span class="text-xs text-slate-400 font-medium">لا توجد صورة</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-                        {{-- Massive Total --}}
-                        <div class="flex flex-col items-center justify-center pt-6 pb-2">
-                            <span class="text-[10px] font-black text-slate-400 mb-1 uppercase tracking-widest">إجمالي المبلغ المدفوع</span>
-                            <div class="font-black text-5xl text-slate-900 tracking-tighter drop-shadow-sm">
-                                {{ number_format($selectedSale->weight * $selectedSale->sale_price, 2) }}
-                                <span class="text-base text-amber-500 font-bold tracking-normal ml-1">ريال</span>
-                            </div>
-                        </div>
-
-                        {{-- Footer: Store & Employee --}}
-                        <div class="mt-6 pt-4 border-t border-slate-100 border-dashed grid grid-cols-2 gap-4">
-                            <div class="text-center">
-                                <span class="block text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">اسم المحل</span>
-                                <span class="block text-xs font-black text-slate-700 truncate">{{ $selectedSale->store_name }}</span>
-                            </div>
-                            <div class="text-center border-r border-slate-100">
-                                <span class="block text-[9px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">الموظف</span>
-                                <span class="block text-xs font-black text-slate-700 truncate">{{ $selectedSale->employee_name }}</span>
-                            </div>
-                        </div>
-
+                {{-- Client Info --}}
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm mb-3 text-center">
+                    <p class="text-sm font-black text-slate-900 mb-1">{{ $selectedSale->full_name }}</p>
+                    <div class="flex flex-col gap-1 text-[10px] text-slate-500">
+                        <span><strong class="text-slate-400">الهوية:</strong> <span class="font-mono">{{ $selectedSale->national_id }}</span></span>
+                        <span><strong class="text-slate-400">النسخة:</strong> <span class="font-mono">{{ $selectedSale->id_version_number }}</span></span>
                     </div>
                 </div>
 
-                {{-- Previous Orders Section --}}
-                <div class="w-full mt-6 pt-6 border-t border-slate-200">
-                    <div class="flex items-center gap-2 mb-4">
-                        <div class="p-1 bg-amber-100 text-amber-600 rounded">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        </div>
-                        <h4 class="text-sm font-black text-slate-900">سجل طلبات العميل <span class="text-amber-500">({{ $customerOrders->total() }})</span></h4>
+                {{-- Main Receipt Data --}}
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm mb-3">
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                        <span class="font-bold text-xs text-slate-500">العيار</span>
+                        <div class="font-black text-slate-900 text-sm">{{ $selectedSale->karat }} <span class="text-[9px] text-amber-500">K</span></div>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                        <span class="font-bold text-xs text-slate-500">الوزن الصافي</span>
+                        <div class="font-black text-slate-900 text-sm">{{ $selectedSale->weight }} <span class="text-[9px] text-amber-500">g</span></div>
+                    </div>
+                    <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                        <span class="font-bold text-xs text-slate-500">سعر الجرام</span>
+                        <div class="font-black text-slate-900 text-sm">{{ number_format($selectedSale->sale_price, 2) }} <span class="text-[9px] text-slate-400">SAR</span></div>
                     </div>
 
+        {{-- Image Viewer --}}
+                    <div class="flex items-center justify-between py-2" x-data="{ showImageModal: false }">
+                        <span class="font-bold text-xs text-slate-500">المرفقات</span>
+                        @if($selectedSale->product_image)
+                            <button @click="showImageModal = true" class="text-[10px] bg-amber-50 text-amber-600 px-2 py-1 rounded font-bold border border-amber-100">عرض الصورة</button>
+
+                            {{-- THE FIX: Removed x-teleport to stop the massive Livewire memory leak --}}
+                            <div x-show="showImageModal" style="display: none;" class="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/90 p-4">
+                                <div class="relative bg-white p-2 rounded-xl shadow-2xl" @click.away="showImageModal = false" style="width: 100%; max-width: 300px;">
+                                    <button @click="showImageModal = false" class="absolute -top-3 -right-3 bg-red-500 text-white p-1.5 rounded-full shadow-lg border-2 border-white">
+                                        <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                    </button>
+                                    <img src="{{ asset('storage/' . $selectedSale->product_image) }}" class="w-full rounded-lg bg-slate-100" style="max-height: 300px; object-fit: contain;">
+                                </div>
+                            </div>
+                        @else
+                            <span class="text-[10px] text-slate-400">لا توجد صورة</span>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- Total & Store --}}
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm text-center mb-3">
+                    <span class="text-[9px] font-black text-slate-400 uppercase">إجمالي المبلغ المدفوع</span>
+                    <div class="font-black text-3xl text-slate-900 mb-3">{{ number_format($selectedSale->weight * $selectedSale->sale_price, 2) }} <span class="text-xs text-amber-500">ريال</span></div>
+                    <div class="border-t border-slate-100 pt-3 grid grid-cols-2 gap-2">
+                        <div><span class="block text-[8px] text-slate-400">اسم المحل</span><span class="block text-[10px] font-black text-slate-700 truncate">{{ $selectedSale->store_name }}</span></div>
+                        <div class="border-r border-slate-100"><span class="block text-[8px] text-slate-400">الموظف</span><span class="block text-[10px] font-black text-slate-700 truncate">{{ $selectedSale->employee_name }}</span></div>
+                    </div>
+                </div>
+
+                {{-- Previous Orders --}}
+                <div class="w-full border-t border-slate-200 pt-3 pb-2">
+                    <h4 class="text-xs font-black text-slate-900 mb-2 flex items-center gap-1.5">
+                        <div class="p-1 bg-amber-100 text-amber-600 rounded"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></div>
+                        سجل طلبات العميل <span class="text-amber-500">({{ $customerOrders->total() }})</span>
+                    </h4>
                     <div class="space-y-2">
                         @foreach($customerOrders as $order)
-                            <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex justify-between items-center">
-                                <div>
-                                    <span class="text-xs font-black text-slate-800 block">طلب <span class="text-amber-600 font-mono">#{{ $order->id }}</span></span>
-                                    <span class="text-[10px] text-slate-400 font-mono">{{ $order->created_at->format('Y-m-d H:i') }}</span>
+                            <button type="button" wire:click="openDetails({{ $order->id }})" class="w-full bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center hover:border-amber-400 transition-colors focus:outline-none">
+                                <div class="text-right">
+                                    <span class="text-[11px] font-black text-slate-800 block">طلب <span class="text-amber-600">#{{ $order->id }}</span></span>
                                 </div>
-                                <div class="flex items-center gap-4 text-left">
-                                    <div>
-                                        <p class="text-[9px] text-slate-400 font-bold uppercase">الوزن</p>
-                                        <p class="text-xs font-black text-slate-700">{{ $order->weight }} ج</p>
-                                    </div>
-                                    <div>
-                                        <p class="text-[9px] text-slate-400 font-bold uppercase">الإجمالي</p>
-                                        <p class="text-xs font-black text-slate-900">{{ number_format($order->weight * $order->sale_price, 2) }} <span class="text-[9px] text-slate-400">SAR</span></p>
-                                    </div>
-                                    <button wire:click="openDetails({{ $order->id }})" class="bg-slate-50 hover:bg-slate-900 text-slate-500 hover:text-amber-400 p-1.5 rounded-lg transition-colors">
-                                        <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                                    </button>
+                                <div class="flex items-center gap-3 text-left">
+                                    <div><p class="text-[8px] text-slate-400">الوزن</p><p class="text-[11px] font-black text-slate-700">{{ $order->weight }} ج</p></div>
+                                    <div class="border-r border-slate-100 pr-2"><p class="text-[8px] text-slate-400">الإجمالي</p><p class="text-[11px] font-black text-slate-900">{{ number_format($order->weight * $order->sale_price, 2) }}</p></div>
                                 </div>
-                            </div>
+                            </button>
                         @endforeach
                     </div>
-
-                    <div class="mt-4" dir="ltr">
-                        {{ $customerOrders->links() }}
-                    </div>
+                    <div class="mt-3" dir="ltr">{{ $customerOrders->links() }}</div>
                 </div>
 
             </div>
 
-            {{-- Modal Footer Actions --}}
-            <div class="bg-white p-4 flex flex-col-reverse sm:flex-row justify-end gap-2 shrink-0 border-t border-slate-200">
-                <button wire:click="closeModal" class="w-full sm:w-auto bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-6 py-2.5 rounded-xl text-sm font-bold transition-all">
-                    إغلاق
-                </button>
-                <button onclick="window.print()" class="w-full sm:w-auto bg-slate-900 hover:bg-black text-amber-400 px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                    طباعة الإيصال
+            {{-- 5. FOOTER (Row 3) --}}
+            <div class="bg-white p-3 sm:p-4 flex gap-2 sm:gap-3 items-center border-t border-slate-200 z-20">
+                <button wire:click="closeModal" class="flex-1 bg-slate-100 text-slate-700 py-2.5 rounded-lg text-sm font-bold border border-slate-200 shadow-sm hover:bg-slate-200 transition-colors">إغلاق</button>
+                <button onclick="window.print()" class="flex-1 bg-slate-900 text-amber-400 py-2.5 rounded-lg text-sm font-bold flex justify-center items-center gap-1.5 shadow-md hover:bg-black transition-colors">
+                    <svg style="width: 16px; height: 16px; flex-shrink: 0;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    طباعة
                 </button>
             </div>
+
         </div>
     </div>
     @endif

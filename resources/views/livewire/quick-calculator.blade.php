@@ -147,12 +147,14 @@
                 <span class="text-sm font-extrabold" x-bind:class="profit >= 0 ? 'text-emerald-500' : 'text-red-500'" x-text="profit.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})"></span>
             </div>
         </div>
+
                 <div class="mt-4">
-            <button @click="goToSaleForm()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-extrabold transition-all shadow-lg flex items-center justify-center gap-2">
-                <span>إنتقل إلى عملية الشراء</span>
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            </button>
+         <button type="button" @click="document.body.style.overflow='auto'; goToSaleForm()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-6 py-4 rounded-2xl font-extrabold transition-all shadow-lg flex items-center justify-center gap-2">
+    <span>إنتقل إلى عملية الشراء</span>
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+</button>
         </div>
+
     </div>
 
 

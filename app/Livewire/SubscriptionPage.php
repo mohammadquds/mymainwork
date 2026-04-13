@@ -4,16 +4,12 @@ namespace App\Livewire;
 use App\Models\Subscriptions;
 use Livewire\Component;
 use App\Models\User;
+use Livewire\WithPagination;
 
 class SubscriptionPage extends Component
 {
 
-    // public function render()
-    // {
-    //     $subscriptions = Subscriptions::with('user')->latest()->paginate(10);
-    //     return view('livewire.subscription-page', compact('subscriptions'))
-    //     ->layout('layoutscreen.app');
-    // }
+use WithPagination;
 // Add these at the top of your class
 public $showModal = false;
 public  $selectedSub = null;

@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center">
+            <div class="flex items-center" >
                 <div x-data="{ profileMenuOpen: false }" class="relative ml-3">
                     <button @click="profileMenuOpen = !profileMenuOpen" @click.away="profileMenuOpen = false" class="flex items-center gap-2 rounded-full bg-amber-600 text-sm focus:ring-2 focus:ring-white p-1">
                         <span class="text-white font-bold hidden md:block px-2">{{ auth()->user()->name ?? 'Guest' }}</span>
@@ -74,11 +74,12 @@
                         </div>
                     </button>
 
-                    <div x-show="profileMenuOpen" x-transition style="display: none;" class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
+                    <div x-show="profileMenuOpen" x-transition style="display: none;"
+                     class="absolute ltr:right-0 rtl:left-0 z-50 mt-2 w-48 ltr:origin-top-right rtl:origin-top-left rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
                         <a href="{{ route('profile.page') }}" wire:navigate class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-bold">Profile Settings</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold">Log out</button>
+                            <button type="submit"class="block w-full ltr:text-left rtl:text-right px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold">Log out</button>
                         </form>
                     </div>
                 </div>

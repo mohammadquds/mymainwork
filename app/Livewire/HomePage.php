@@ -43,7 +43,7 @@ class HomePage extends Component
     {
         // جلب البيانات ومعالجتها للعربية
         $pdfData = $this->prepareArabicData();
-        
+
         $pdf = Pdf::loadView('pdf.report', ['pdf' => $pdfData]);
         $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('report.pdf');
@@ -53,7 +53,7 @@ class HomePage extends Component
     {
         // جلب البيانات ومعالجتها للعربية
         $pdfData = $this->prepareArabicData();
-        
+
         $pdf = Pdf::loadView('pdf.report', ['pdf' => $pdfData]);
         $pdf->setPaper('A4', 'landscape');
         return $pdf->download('gold_report.pdf');
@@ -71,7 +71,7 @@ class HomePage extends Component
             $item->customer_name = $arabic->utf8Glyphs($item->customer_name);
             $item->staff_name = $arabic->utf8Glyphs($item->staff_name);
             $item->shop_name = $arabic->utf8Glyphs($item->shop_name);
-            
+
             // إذا كان نوع العملية (بيع/شراء) مكتوب بالعربي
             if($item->type == 'sale') $item->display_type = $arabic->utf8Glyphs("بيع");
             else $item->display_type = $arabic->utf8Glyphs("شراء");
@@ -169,7 +169,7 @@ public function openDetails($id)
     if ($this->selectedSale) {
         $customerOrders = form::where('national_id', $this->selectedSale->national_id)
             ->orderBy('created_at', 'asc')
-            ->paginate(3, ['*'], 'ordersPage'); // Show 3 at a time, name it 'ordersPage'
+            ->paginate(2, ['*'], 'ordersPage'); // Show 3 at a time, name it 'ordersPage'
     }
 
     return view('livewire.home-page',compact('sales','customerOrders'))
