@@ -1,4 +1,4 @@
-<nav class="bg-amber-500 shadow-md" x-data="{ mobileMenuOpen: false }"  dir="rtl">
+<nav class="bg-yellow-400 shadow-md" x-data="{ mobileMenuOpen: false }"  dir="rtl">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="flex h-16 items-center justify-between">
 
@@ -75,10 +75,10 @@
                     </button>
 
                     <div x-show="profileMenuOpen" x-transition style="display: none;" class="absolute right-0 z-50 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5">
-                        <a href="{{ route('profile.page') }}" wire:navigate class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-bold">Profile Settings</a>
+                        <a href="{{ route('profile.page') }}" wire:navigate class="block px-4 py-2 text-sm text-gray-700 hover:bg-amber-50 hover:text-amber-700 font-bold">اعدادات الحساب</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold">Log out</button>
+                            <button type="submit" class="block w-full text-right px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-bold">تسجيل الخروج</button>
                         </form>
                     </div>
                 </div>
