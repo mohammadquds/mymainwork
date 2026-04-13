@@ -1,17 +1,17 @@
 <div class="p-6  text-right border-collapse whitespace-nowrap" dir="rtl">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <h2 class="text-2xl font-bold whitespace-normal">لوحة تحكم المستخدم </h2>
+        <h2 class="text-2xl text-gray-700 font-bold whitespace-normal">لوحة تحكم المستخدم </h2>
 
         <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
             @can('user.create')
                 <button wire:click="create"
-                    class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-4 py-2 rounded">
+                    class="w-full sm:w-auto bg-amber-700 text-white hover:bg-amber-600 hover:text-white px-4 py-2 rounded">
                     إضافة مستخدم جديد
                 </button>
             @endcan
 
             <button wire:click="$set('showInviteModal', true)"
-                class="w-full sm:w-auto bg-blue-500 hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-800 text-white px-4 py-2 rounded">
+                class="w-full sm:w-auto bg-yellow-500 text-white hover:bg-amber-600 hover:text-white px-4 py-2 rounded">
                 دعوة مستخدم جديد عبر البريد الإلكتروني
             </button>
         </div>
@@ -29,14 +29,14 @@
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 whitespace-nowrap text-right border-collapse whitespace-nowrap" dir ="rtl">
             <thead class="">
                 <tr>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">الإسم</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">البريد الإلكتروني</th>
-                    <th class="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">الصلاحية </th>
-                    <th class="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">المشرف</th>
+                    <th class="px-6 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">الإسم</th>
+                    <th class="px-6 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">البريد الإلكتروني</th>
+                    <th class="hidden md:table-cell px-6 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">الصلاحية </th>
+                    <th class="hidden md:table-cell px-6 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">المشرف</th>
                     @can('user.edit')
-                    <th class="hidden md:table-cell  px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"> الإعدادات</th>
+                    <th class="hidden md:table-cell  px-6 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 uppercase"> الإعدادات</th>
                     @endcan
-                 @can('subscription.unactive.view')  <th class="hidden md:table-cell px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase"> الإشتراك</th>@endcan
+                 @can('subscription.unactive.view')  <th class="hidden md:table-cell px-6 py-3 text-right text-sm font-medium text-gray-500 dark:text-gray-400 uppercase"> الإشتراك</th>@endcan
                 </tr>
             </thead>
         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">

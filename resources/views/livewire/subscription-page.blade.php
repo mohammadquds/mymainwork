@@ -1,5 +1,5 @@
  <div class="w-full px-4 py-6  text-right border-collapse whitespace-nowrap" dir ="rtl">
-     <h1 class="text-2xl font-bold mb-4 text-right border-collapse" dir ="rtl">صفحة الإشتراكات</h1>
+     <h1 class="text-2xl text-gray-700 font-bold mb-4 text-right border-collapse" dir ="rtl">صفحة الإشتراكات</h1>
      <div class="w-full bg-white shadow-2xl rounded-3xl overflow-x-auto border border-gray-100">
          <table class="w-full text-right border-collapse whitespace-nowrap" dir ="rtl">
 
