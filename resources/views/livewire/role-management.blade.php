@@ -1,5 +1,5 @@
 {{-- resources/views/livewire/role-management.blade.php --}}
- <div class="w-full px-4 py-6  text-right border-collapse whitespace-nowrap" dir ="rtl">
+<div class="w-full px-4 py-6  text-right border-collapse whitespace-nowrap" dir ="rtl">
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-2xl text-gray-700 font-bold">إدارة الصلاحيات</h2>
@@ -22,30 +22,34 @@
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 whitespace-nowrap">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
-                        <th class="px-6 py-3 text-start text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">اسم الصلاحية
+                        <th class="px-6 py-3 text-start text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">
+                            اسم الصلاحية
                         </th>
                         <th class="px-6 py-3 text-start text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">
                             الأذونات</th>
-                        <th class="px-6 py-3 text-start text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">عدد المستخدمين
+                        <th class="px-6 py-3 text-start text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">
+                            عدد المستخدمين
                         </th>
                         <th class="px-6 py-3 text-start text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">
                             الإعدادات</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white dark:bg-white divide-y divide-gray-200 dark:divide-gray-700">
-                    @foreach($roles as $role)
+                    @foreach ($roles as $role)
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-gray-700">{{ $role->name }}
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900 dark:text-gray-700">
+                                {{ $role->name }}
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex flex-wrap gap-1">
-                                        <span
-                                            class="inline-flex px-2 py-1 text-xs bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 rounded-full">
-                                            {{ $role->permissions->count() }}
-                                        </span>
+                                    <span
+                                        class="inline-flex px-2 py-1 text-xs bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-200 rounded-full">
+                                        {{ $role->permissions->count() }}
+                                    </span>
                                 </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-700">{{ $role->users->count() }}
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-700">
+                                {{ $role->users->count() }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 @can('role.edit')
@@ -55,7 +59,7 @@
                                     </button>
                                 @endcan
                                 @can('role.delete')
-                                    @if($role->users->count() == 0)
+                                    @if ($role->users->count() == 0)
                                         <button wire:click="delete({{ $role->id }})" wire:confirm="Are you sure?"
                                             class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-200">
                                             حذف
@@ -73,11 +77,12 @@
             {{ $roles->links() }}
         </div>
 
-        <!-- Modal -->
-        @if($showModal)
+        <!-- Modal for mobile view -->
+        @if ($showModal)
             <div class="fixed inset-0  backdrop-blur-md overflow-y-auto h-full w-full">
 
-                <div class="relative mt-10 mx-auto p-5 border w-10/12 sm:w-3/4 md:w-2/3 max-w-4xl max-h-[85vh] overflow-y-auto shadow-lg rounded-md bg-white dark:bg-gray-800">
+                <div
+                    class="relative mt-10 mx-auto p-5 border w-10/12 sm:w-3/4 md:w-2/3 max-w-4xl max-h-[85vh] overflow-y-auto shadow-lg rounded-md bg-white dark:bg-gray-800">
 
                     <div class="mt-3">
                         <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">
@@ -86,10 +91,13 @@
 
                         <form wire:submit.prevent="save">
                             <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">اسم الصلاحية</label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">اسم
+                                    الصلاحية</label>
                                 <input type="text" wire:model="name"
                                     class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
-                                @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                                @error('name')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
                             </div>
 
                             <div class="mb-6">
@@ -97,14 +105,15 @@
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">الأذونات</label>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                    @foreach($permissions as $group => $groupPermissions)
+                                    @foreach ($permissions as $group => $groupPermissions)
                                         <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                                            <h4 class="font-medium text-gray-900 dark:text-white mb-2 capitalize">{{ $group }}</h4>
-                                            @foreach($groupPermissions as $permission)
+                                            <h4 class="font-medium text-gray-900 dark:text-white mb-2 capitalize">
+                                                {{ $group }}</h4>
+                                            @foreach ($groupPermissions as $permission)
                                                 <div class="flex items-center mb-2">
                                                     <input type="checkbox" wire:model="selectedPermissions"
-                                                        value="{{ $permission->name }}" id="permission-{{ $permission->id }}"
-                                                        class="mr-2">
+                                                        value="{{ $permission->name }}"
+                                                        id="permission-{{ $permission->id }}" class="mr-2">
                                                     <label for="permission-{{ $permission->id }}"
                                                         class="text-sm text-gray-700 dark:text-gray-300">
                                                         {{ $permission->name }}
@@ -132,5 +141,4 @@
             </div>
         @endif
     </div>
- </div>
-
+</div>

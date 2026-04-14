@@ -65,12 +65,11 @@ class User extends Authenticatable
         ];
     }
 
-    //////
  protected $casts = [
     'email_verified_at' => 'datetime',
     'password' => 'hashed',
-    'start_date' => 'date', // Make sure this is here
-    'end_date' => 'date',   // Make sure this is here
+    'start_date' => 'date',
+    'end_date' => 'date',
 ];
 
 
@@ -90,7 +89,7 @@ public function teamMembers()
 // Helper to check if they are still active
 public function isSubscribed()
 {
-    if ($this->hasRole('Super Admin')) return true; // Admin never gets blocked
+    if ($this->hasRole('Super Admin')) return true;
 
     return $this->end_date && $this->end_date->isFuture();
 }
@@ -98,11 +97,8 @@ public function isSubscribed()
 // Add this to User.php
     public function children()
     {
-        // This tells Laravel: "Find all users where their admin_id matches my id"
         return $this->hasMany(User::class, 'admin_id');
     }
-
-///////
 
 
     /**

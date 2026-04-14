@@ -8,16 +8,16 @@ use App\Http\Middleware\CheckSubscription;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    // here we redirect visitors important and need more search
+    // here we redirect visitors
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(fn (Request $request) => route('register-account.page'));
+        $middleware->redirectGuestsTo(fn(Request $request) => route('register-account.page'));
 
-        // Also: Redirect LOGGED IN users away from /login if they try to go there
-        $middleware->redirectUsersTo(fn (Request $request) => route('home.page'));
+        // Redirect LOGGED IN users away from /login if they try to go there
+        $middleware->redirectUsersTo(fn(Request $request) => route('home.page'));
 
         $middleware->alias([
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,

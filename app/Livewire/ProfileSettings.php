@@ -15,20 +15,18 @@ use Illuminate\Validation\ValidationException;
 class ProfileSettings extends Component
 {
 
-   public string $name = '';
+    public string $name = '';
     public string $email = '';
 
-    // This runs when the page loads to fill in the inputs
     public function mount()
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
     }
 
-    // This runs when you click "Save"
     public function updateProfile()
     {
-     /**  @var \App\Models\User $user*/
+        /**  @var \App\Models\User $user*/
         $user = Auth::user();
 
         $validated = $this->validate([
@@ -48,17 +46,17 @@ class ProfileSettings extends Component
         // Show a success message
         session()->flash('message', 'Profile successfully updated.');
     }
-        #[Computed]
+    #[Computed]
     public function showDeleteUser(): bool
     {
-        return ! Auth::user() instanceof MustVerifyEmail
+        return !Auth::user() instanceof MustVerifyEmail
             || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
     }
 
 
     // password reset boxes
 
- use PasswordValidationRules;
+    use PasswordValidationRules;
 
     public string $current_password = '';
     public string $password = '';
@@ -87,11 +85,11 @@ class ProfileSettings extends Component
         $this->reset('current_password', 'password', 'password_confirmation');
 
         $this->dispatch('password-updated');
-   }
+    }
 
     public function render()
     {
         return view('livewire.profile-settings')
-        ->layout('layoutscreen.app');
+            ->layout('layoutscreen.app');
     }
 }

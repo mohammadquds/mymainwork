@@ -90,7 +90,7 @@ use WithPagination;
     {
         $this->authorize('role.view');
 
-        // we used the \\\->where('name', '!=', 'Super Admin')\\\ to hide the super admin line from line page
+        // we used the \\\->where('name', '!=', 'Super Admin')\\\ to hide the super admin line from line page so
     $roles = Role::with('permissions')->where('name', '!=', 'Super Admin')->paginate(10);
     $permissions = Permission::all()->groupBy(function ($permission) {
                 return explode('.', $permission->name)[0];

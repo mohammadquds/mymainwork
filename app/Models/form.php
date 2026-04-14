@@ -19,7 +19,6 @@ class form extends Model
     'product_image',
 ];
 
-// Always cast dates so Carbon can handle them
 protected $casts = [
     'date_of_birth' => 'date',
     'weight' => 'float',

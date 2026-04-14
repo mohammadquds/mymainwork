@@ -11,7 +11,7 @@ use App\Models\User;
 class RegisterAccount extends Component
 {
 
-  // signin component
+    // signin component
     public $name;
     public $sign_email;
     public $sign_password;
@@ -27,47 +27,45 @@ class RegisterAccount extends Component
     public $log_password;
     public $remember = false;
 
-    // toggle that mix two php and blade together
+
+    // to compine two variables
     public $isLoginMode = false;
 
-    // --- NEW: Variable to hold the Admin's ID ---
+    // that will hold the admin id to share the url
     public $admin_id = null;
 
 
 
-
+    // here the system will check if its from user unique link then will fill company name if not will leave it empty
     public function mount()
     {
-        // 1. Grab the short code from the URL
         $this->admin_id = request()->query('ref');
 
-        // 2. If a code exists, switch to the Register form automatically
         if ($this->admin_id) {
             $this->isLoginMode = true;
 
-            // --- NEW: Find the Admin and lock their company name ---
-            $admin = \App\Models\User::where('invite_code', $this->admin_id)->first();
+            $admin = User::where('invite_code', $this->admin_id)->first();
 
             if ($admin && $admin->company_name) {
-                // Auto-fill the input with the Admin's company
                 $this->company_name = $admin->company_name;
-                // Lock the field so the user cannot change it
                 $this->isCompanyLocked = true;
             }
         }
     }
-public function toggleMode()
-{
-    $this->resetValidation();
-    $this->reset(['name', 'sign_email', 'sign_password', 'sign_password_confirmation','company_name', 'log_email', 'log_password']);
-    $this->isLoginMode = !$this->isLoginMode;
-}
+
+    public function toggleMode()
+    {
+        $this->resetValidation();
+        $this->reset(['name', 'sign_email', 'sign_password', 'sign_password_confirmation', 'company_name', 'log_email', 'log_password']);
+        $this->isLoginMode = !$this->isLoginMode;
+    }
 
 
 
-  // sign in page
-    public function registerUser(){
-         $this->validate([
+    // sign in page
+    public function registerUser()
+    {
+        $this->validate([
             'name' => 'required | max:255',
             'company_name' => 'required | max:255',
             'sign_email' => 'required|email|unique:users,email|max:255',
@@ -78,7 +76,7 @@ public function toggleMode()
         $isSuperAdminInvite = false;
 
         if ($this->admin_id) {
-             $admin = User::where('invite_code', $this->admin_id)->first();
+            $admin = User::where('invite_code', $this->admin_id)->first();
 
             // Check if the person who invited them is a Super Admin
             if ($admin && $admin->hasRole('Super Admin')) {
@@ -112,34 +110,32 @@ public function toggleMode()
             'status' => $status,
         ]);
 
-        // 4. DYNAMIC ROLE ASSIGNMENT
         if ($isSuperAdminInvite) {
             // If invited by a Super Admin, they become an Admin
             $user->assignRole('Admin');
         } else {
-            // If invited by anyone else (or no one), they become a standard user
+            // If invited by anyone else or no one they become a standard user
             $user->assignRole('user');
         }
 
         Auth::login($user);
-        session()->flash('congrats','welcome');
+        session()->flash('congrats', 'welcome');
 
         return redirect('/homePage');
     }
 
 
 
-    
-// log in page
 
- public function loginUser()
+    // log in page
+
+    public function loginUser()
     {
         $this->validate([
             'log_email' => 'required|email|max:255',
             'log_password' => 'required|max:255'
         ]);
 
-        // Map the prefixed variables back to standard Auth keys
         $credentials = [
             'email' => $this->log_email,
             'password' => $this->log_password

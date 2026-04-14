@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\form; // Make sure this matches your model name perfectly
+use App\Models\form;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
@@ -21,7 +21,7 @@ class SalesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
         $this->endDate = $endDate;
     }
 
-    // 1. Fetch the data based on dates
+    //  search the data based on dates
     public function query()
     {
         $query = form::query();
@@ -37,40 +37,39 @@ class SalesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
         return $query->orderBy('created_at', 'asc');
     }
 
-    // 2. Set the Excel Column Headers (Arabic)
     public function headings(): array
     {
         return [
+            'التاريخ',
             'رقم الفاتورة',
             'اسم العميل',
             'الهوية',
             'الوزن (جرام)',
             'العيار',
             'سعر الجرام',
-            'الإجمالي (ريال)',
-            'التاريخ'
+            'الإجمالي (ريال)'
         ];
     }
 
-    // 3. Map the database rows to the columns
+    //  make the database rows to the columns
     public function map($sale): array
     {
         return [
+            $sale->created_at->format('Y-m-d H:i'),
             $sale->id,
             $sale->full_name,
             ' ' . $sale->national_id,
             $sale->weight,
             $sale->karat,
             $sale->sale_price,
-            $sale->weight * $sale->sale_price, // Calculate Total automatically
-            $sale->created_at->format('Y-m-d H:i'),
+            $sale->weight * $sale->sale_price,
         ];
     }
 
     public function registerEvents(): array
     {
         return [
-            AfterSheet::class => function(AfterSheet $event) {
+            AfterSheet::class => function (AfterSheet $event) {
                 $event->sheet->getDelegate()->setRightToLeft(true);
             },
         ];

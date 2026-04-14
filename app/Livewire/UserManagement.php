@@ -25,24 +25,22 @@ class UserManagement extends Component
     public $showModal = false;
     public $isSelf = false;
     public $showDetailsModal = false;
-    public ?\App\Models\User $selectedUserDetails = null;
+    public ?User $selectedUserDetails = null;
     public $company_name;
     public $isCompanyLocked = false;
 
 
-
-    // Add these methods to handle opening and closing
     public function openDetails($id)
     {
-        $this->selectedUserDetails = \App\Models\User::findOrFail($id);
+        $this->selectedUserDetails = User::findOrFail($id);
         $this->showDetailsModal = true;
     }
-
     public function closeDetailsModal()
     {
         $this->showDetailsModal = false;
         $this->selectedUserDetails = null;
     }
+
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -54,11 +52,13 @@ class UserManagement extends Component
 
     public function create()
     {
+
         $this->authorize('user.create');
         $this->resetForm();
         $this->company_name = auth()->user()->company_name;
         $this->showModal = true;
     }
+
 
     public function edit($id)
     {
@@ -71,8 +71,7 @@ class UserManagement extends Component
         $this->selectedRoles = $user->roles->pluck('name')->toArray();
         $this->isEditing = true;
         $this->showModal = true;
-        // $this->showDetailsModal = false;
-        // Check if the user is editing themselves
+        // will check if the user editing himself
         $this->isSelf = ($user->id === Auth::id());
     }
 
@@ -89,22 +88,19 @@ class UserManagement extends Component
         }
         $this->validate();
 
-
-        // --- SECURITY CHECK: Dynamic Hierarchy ---
+        // super admin can give permissions to any one
         $isSuperAdmin = Auth::user()->hasRole('Super Admin');
         $myPowerLevel = Auth::user()->roles->max(fn($role) => $role->permissions->count()) ?? 0;
 
-        // Get a list of role names I am actually allowed to assign
         $allowedRoleNames = Role::with('permissions')->get()
             ->filter(function ($role) use ($myPowerLevel, $isSuperAdmin) {
                 if ($isSuperAdmin)
-                    return true; // Super Admin bypasses the limit
-                return $role->permissions->count() < $myPowerLevel; // STRICTLY less than (<)
+                    return true;
+                return $role->permissions->count() < $myPowerLevel;
             })
             ->pluck('name')
             ->toArray();
-
-        // Strip out any roles from the form that are above my power level
+        // you can give permission to new user but the role have to be lower than you
         $this->selectedRoles = array_intersect($this->selectedRoles, $allowedRoleNames);
 
 
@@ -122,7 +118,6 @@ class UserManagement extends Component
             $user = User::findOrFail($this->userId);
             $user->update($userData);
 
-            // ONLY sync roles if they are NOT editing themselves
             if (!$this->isSelf) {
                 $user->syncRoles($this->selectedRoles);
             }
@@ -143,7 +138,7 @@ class UserManagement extends Component
     }
 
 
-
+    // this will delete but you cant delete your self
     public function delete($id)
     {
         $this->authorize('user.delete');
@@ -163,7 +158,6 @@ class UserManagement extends Component
         if ($this->selectedUserDetails && $this->selectedUserDetails->id === $id) {
             $this->closeDetailsModal();
         }
-
         session()->flash('message', 'User deleted successfully!');
     }
 
@@ -192,7 +186,7 @@ class UserManagement extends Component
     }
 
 
-    // send emails invitation?
+    // send emails invitation
     public $showInviteModal = false;
     public $inviteEmail = '';
 
@@ -202,16 +196,14 @@ class UserManagement extends Component
 
         $admin = auth()->user();
 
-        // 1. If this Admin doesn't have a code yet, generate one instantly!
+        //  If Admin doesn't have a code yet generate new one
         if (!$admin->invite_code) {
             $admin->update(['invite_code' => \Illuminate\Support\Str::random(8)]);
         }
 
-        // 2. Build the beautiful, clean URL (e.g., mainwork.test/register-account?ref=Xy7P2mQ1)
         $url = url('/register-account?ref=' . $admin->invite_code);
 
-        // 3. Send the email
-        \Illuminate\Support\Facades\Mail::to($this->inviteEmail)->send(new \App\Mail\TestMail($url, $admin->name));
+        Mail::to($this->inviteEmail)->send(new TestMail($url, $admin->name));
 
         $this->showInviteModal = false;
         $this->inviteEmail = '';
@@ -219,11 +211,9 @@ class UserManagement extends Component
     }
 
 
-    // Change this line
-    public $selectedDates = []; // Use an array
+    public $selectedDates = [];
     public function grantAccess($userId)
     {
-        // 1. Get the date from the array we created
         $date = $this->selectedDates[$userId] ?? null;
 
         if (!$date) {
@@ -231,7 +221,6 @@ class UserManagement extends Component
             return;
         }
 
-        // 2. Update the main user (Admin)
         $user = User::findOrFail($userId);
         $user->update([
             'start_date' => now(),
@@ -239,16 +228,12 @@ class UserManagement extends Component
             'status' => 'active'
         ]);
 
-        // 3. --- NEW: UPDATE ALL CHILDREN INSTANTLY ---
-        // Find everyone who belongs to this Admin and give them the exact same new dates!
+        //    here if he has child will update them also
         User::where('admin_id', $user->id)->update([
             'start_date' => now(),
             'end_date' => $date,
             'status' => 'active'
         ]);
-        // ---------------------------------------------
-
-        // Clear the input field for that user after success
         unset($this->selectedDates[$userId]);
 
         session()->flash('message', "تم تفعيل الاشتراك لـ {$user->name} وجميع التابعين له بنجاح.");
@@ -259,44 +244,36 @@ class UserManagement extends Component
     {
         $user = User::findOrFail($userId);
 
-        // 1. Cancel the main user (The Admin)
         $user->update([
             'end_date' => now()->subDay(),
             'status' => 'expired'
         ]);
-
-        // 2. --- NEW: CANCEL ALL CHILDREN ---
-        // Find anyone who has this Admin's ID and cancel them too!
+        //    here if he has child will cancel them also
         User::where('admin_id', $user->id)->update([
             'end_date' => now()->subDay(),
             'status' => 'expired'
         ]);
-        // -----------------------------------
-
         $this->dispatch('subscription-updated');
 
         session()->flash('message', "تم إغلاق اشتراك {$user->name} وجميع التابعين له بنجاح.");
     }
 
+
+    // if you have more permissions you can change everything but if you dont you can change the lower
     public function render()
     {
         $this->authorize('user.view');
 
-        // 1. Calculate MY "Power Level" (the highest number of permissions I have)
         $myPowerLevel = Auth::user()->roles->max(function ($role) {
             return $role->permissions->count();
         }) ?? 0;
 
-        // 2. Find roles that are "too high" for me to manage
         $forbiddenRoleNames = Role::with('permissions')->get()->filter(function ($role) use ($myPowerLevel) {
             return $role->permissions->count() > $myPowerLevel;
         })->pluck('name');
 
-
-        // 1. Fetch Users, eagerly loading roles and relationships
         $query = User::with(['roles', 'children.roles', 'manager']);
 
-        // 2. Filter the view based on the logged-in user
         if (Auth::user()->hasRole('Super Admin')) {
 
             $query->whereDoesntHave('manager', function ($managerQuery) {
@@ -309,7 +286,6 @@ class UserManagement extends Component
             $query->where('id', Auth::id());
         }
 
-        // 3. Keep your forbidden roles filter
         if ($forbiddenRoleNames->isNotEmpty()) {
             $query->whereDoesntHave('roles', function ($q) use ($forbiddenRoleNames) {
                 $q->whereIn('name', $forbiddenRoleNames);
@@ -321,17 +297,12 @@ class UserManagement extends Component
             ->paginate(10);
 
 
-
-        // 4. Filter the Roles dropdown: Only show roles I am allowed to assign
         $isSuperAdmin = Auth::user()->hasRole('Super Admin');
 
         $roles = Role::with('permissions')->get()->filter(function ($role) use ($myPowerLevel, $isSuperAdmin) {
-            // Super Admins can see and assign all roles
             if ($isSuperAdmin) {
                 return true;
             }
-
-            // Normal Admins can ONLY see roles strictly LESS THAN (<) their own power level
             return $role->permissions->count() < $myPowerLevel;
         });
 
