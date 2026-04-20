@@ -98,7 +98,7 @@ class RegisterAccount extends Component
             $status = $admin->status ?? 'active';
         }
 
-        // 3. CREATE THE USER
+        //  CREATE THE USER
         $user = User::create([
             'name' => $this->name,
             'email' => $this->sign_email,

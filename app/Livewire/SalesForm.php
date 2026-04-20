@@ -131,6 +131,33 @@ class SalesForm extends Component
         return (float) $this->weight * (float) $this->sale_price;
     }
 
+
+
+    private function getAllowedUserIds()
+    {
+        $user = auth()->user();
+
+        if ($user->hasRole('Super Admin')) {
+            return \App\Models\User::pluck('id')->toArray();
+        }
+
+        $topBossId = $user->admin_id ? $user->admin_id : $user->id;
+        $topBoss = \App\Models\User::find($topBossId);
+
+        if (!$topBoss) {
+            $topBoss = $user;
+        }
+
+        $allowedIds = [$topBoss->id];
+
+        if ($topBoss->children && $topBoss->children->count() > 0) {
+            $childIds = $topBoss->children->pluck('id')->toArray();
+            $allowedIds = array_merge($allowedIds, $childIds);
+        }
+
+        return $allowedIds;
+    }
+
     public function save()
     {
         $this->validate();
@@ -141,6 +168,7 @@ class SalesForm extends Component
         }
 
         form::create([
+            'user_id' => auth()->id(),
             'full_name' => $this->full_name,
             'national_id' => $this->national_id,
             'date_of_birth' => $this->date_of_birth,
@@ -165,8 +193,10 @@ class SalesForm extends Component
     public function updatedNationalId($value)
     {
         if (strlen($value) === 10) {
-
-            $existingCustomer = form::where('national_id', $value)->first();
+            $allowedIds = $this->getAllowedUserIds();
+            $existingCustomer = form::where('national_id', $value)
+                                    ->whereIn('user_id', $allowedIds)
+                                    ->first();
 
             if ($existingCustomer) {
                 $this->full_name = $existingCustomer->full_name;

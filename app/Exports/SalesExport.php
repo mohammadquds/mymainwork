@@ -13,18 +13,21 @@ class SalesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
 {
     protected $startDate;
     protected $endDate;
+    public $allowedIds;
 
     // Receive the dates from Livewire
-    public function __construct($startDate, $endDate)
+    public function __construct($startDate, $endDate, $allowedIds)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->allowedIds = $allowedIds;
     }
 
     //  search the data based on dates
     public function query()
     {
         $query = form::query();
+        $query->whereIn('user_id', $this->allowedIds);
 
         if ($this->startDate) {
             $query->whereDate('created_at', '>=', $this->startDate);

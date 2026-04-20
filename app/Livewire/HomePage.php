@@ -2,14 +2,15 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
+use App\Exports\SalesExport;
 use App\Models\form;
-use Livewire\WithPagination;
-use Livewire\Attributes\On;
-use Maatwebsite\Excel\Facades\Excel;
 use ArPHP\I18N\Arabic;
 use Barryvdh\DomPDF\Facade\Pdf;
-use App\Exports\SalesExport;
+use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
+use Livewire\Component;
+use Livewire\WithPagination;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class HomePage extends Component
@@ -18,14 +19,32 @@ class HomePage extends Component
 
     public $selectedSale = null;
     public $showModal = false;
+    // #[Url(as:'q', except:'', history:true)]
     public $search = '';
     public $startDate;
     public $endDate;
     public $showExcelModal = false;
 
+
+
+
+// here if you wanna see your search words in the url search bar also
+    //     protected function queryString() {
+    //     return [
+    //         'search' => [
+    //             'as' => 'q',
+    //             'history' => true,
+    //             'except' => ''
+    //         ]
+    //     ];
+    // }
+
+
+
     public function index()
     {
-        $pdf = form::all();
+        $allowedIds = $this->getAllowedUserIds();
+        $pdf = form::whereIn('user_id', $allowedIds)->get();
         return view('reports.index', compact('pdf'));
     }
     public function viewPdf()
@@ -37,6 +56,8 @@ class HomePage extends Component
         $pdf->setPaper('A4', 'landscape');
         return $pdf->stream('report.pdf');
     }
+
+
 
     public function generatePdf()
     {
@@ -50,8 +71,14 @@ class HomePage extends Component
     // دالة مساعدة لمعالجة النصوص العربية في الجدول بالكامل
     private function prepareArabicData()
     {
+
         $arabic = new Arabic();
-        $sales = form::all();
+        $allowedIds = $this->getAllowedUserIds();
+
+        // SECURITY FIX: Filter PDF data
+        $sales = form::whereIn('user_id', $allowedIds)->get();
+
+
 
         // نقوم بالمرور على كل سجل وتعديل النصوص العربية فيه
         return $sales->map(function ($item) use ($arabic) {
@@ -73,7 +100,9 @@ class HomePage extends Component
 
     public function viewSinglePdf($id)
     {
-        $sale = form::findOrFail($id);
+         $allowedIds = $this->getAllowedUserIds();
+
+        $sale = form::whereIn('user_id', $allowedIds)->findOrFail($id);
         $arabic = new Arabic();
 
         $sale->full_name = $arabic->utf8Glyphs($sale->full_name);
@@ -88,9 +117,6 @@ class HomePage extends Component
         $pdf->setPaper('A4', 'portrait');
         return $pdf->stream('invoice_' . $sale->id . '.pdf');
     }
-
-
-
 
 
 
@@ -109,7 +135,8 @@ class HomePage extends Component
     {
         $fileName = 'sales_' . now()->format('Y_m_d_His') . '.xlsx';
 
-        return Excel::download(new SalesExport($this->startDate, $this->endDate), $fileName);
+         $allowedIds = $this->getAllowedUserIds();
+        return Excel::download(new SalesExport($this->startDate, $this->endDate, $allowedIds), $fileName);
     }
 
 
@@ -131,7 +158,11 @@ class HomePage extends Component
 
     public function openDetails($id)
     {
-        $this->selectedSale = form::findOrFail($id);
+        $allowedIds = $this->getAllowedUserIds();
+
+        // SECURITY FIX: Only find the form IF it belongs to an allowed user
+        $this->selectedSale = form::whereIn('user_id', $allowedIds)->findOrFail($id);
+
         $this->showModal = true;
         $this->resetPage('ordersPage');
     }
@@ -142,10 +173,35 @@ class HomePage extends Component
         $this->selectedSale = null;
     }
 
+
+     private function getAllowedUserIds()
+    {
+        $user = auth()->user();
+
+        if ($user->hasRole('Super Admin')) {
+            return \App\Models\User::pluck('id')->toArray();
+        }
+        $topBossId = $user->admin_id ? $user->admin_id : $user->id;
+        $topBoss = \App\Models\User::find($topBossId);
+
+        if (!$topBoss) {
+            $topBoss = $user;
+        }
+
+        $allowedIds = [$topBoss->id];
+        if ($topBoss->children && $topBoss->children->count() > 0) {
+            $childIds = $topBoss->children->pluck('id')->toArray();
+            $allowedIds = array_merge($allowedIds, $childIds);
+        }
+        return $allowedIds;
+    }
+
+
     public function render()
     {
-
-        $salesQuery = form::query();
+// Get the list of IDs this person is allowed to see
+        $allowedIds = $this->getAllowedUserIds();
+        $salesQuery = form::whereIn('user_id', $allowedIds);
 
         if (!empty($this->search)) {
             $salesQuery->where(function ($query) {
@@ -154,6 +210,8 @@ class HomePage extends Component
                     ->orWhere('id_version_number', 'like', '%' . $this->search . '%');
             });
         }
+
+
 
         $sales = $groupedSales = $salesQuery->selectRaw('
             MAX(id) as id,
@@ -168,9 +226,14 @@ class HomePage extends Component
             ->orderBy('created_at', 'asc')
             ->paginate(10);
 
+
+
         $customerOrders = collect();
         if ($this->selectedSale) {
+
+            $allowedIds = $this->getAllowedUserIds();
             $customerOrders = form::where('national_id', $this->selectedSale->national_id)
+                ->whereIn('user_id', $allowedIds)
                 ->orderBy('created_at', 'asc')
                 ->paginate(2, ['*'], 'ordersPage');
         }

@@ -108,7 +108,7 @@
                                         <span
                                             class="inline-flex items-center px-2 py-1 rounded text-xs font-bold bg-gray-100 text-gray-800">{{ $user->manager->name }}</span>
                                     @else
-                                        <span class="text-xs text-indigo-400 font-bold">Super Admin</span>
+                                        <span class="text-xs text-indigo-400 font-bold">System</span>
                                     @endif
                                 </td>
 
@@ -238,7 +238,7 @@
                                                         {{ $user->manager->name }}
                                                     </span>
                                                 @else
-                                                    <span class="text-xs text-indigo-400 font-bold">Super Admin</span>
+                                                    <span class="text-xs text-indigo-400 font-bold">System</span>
                                                 @endif
                                             </td>
 
@@ -454,7 +454,7 @@
                                                                         {{ $selectedUserDetails->manager->name }}
                                                                     </span>
                                                                 @else
-                                                                    <span class="text-xs text-indigo-400 font-bold">Super Admin</span>
+                                                                    <span class="text-xs text-indigo-400 font-bold">System</span>
                                                                 @endif
                                                             </div>
 
