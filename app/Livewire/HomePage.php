@@ -159,23 +159,35 @@ class HomePage extends Component
     public function exportPdf()
     {
         $fileName = 'sales_' . now()->format('Y_m_d_His') . '.pdf';
-        $arabic = new Arabic();
-        $allowedIds = $this->getAllowedUserIds();
+        $arabic = new \ArPHP\I18N\Arabic();
 
-        $data = form::whereIn('user_id', $allowedIds)
+        // القوة هنا: نلغي $allowedIds ونستخدم ID المستخدم الحالي حصراً
+        $data = \App\Models\form::where('user_id', auth()->id()) 
             ->when($this->startDate, fn($query) => $query->whereDate('created_at', '>=', $this->startDate))
             ->when($this->endDate, fn($query) => $query->whereDate('created_at', '<=', $this->endDate))
+            // إذا لم يحدد تاريخ، نكتفي بالشهر الحالي لضمان خفة الملف
+            ->when(!$this->startDate && !$this->endDate, function($query) {
+                $query->whereMonth('created_at', now()->month)
+                    ->whereYear('created_at', now()->year);
+            })
             ->orderBy('created_at', 'asc')
             ->get();
 
-        $pdf = Pdf::loadView('pdf.report', [
-            'pdf' => $data,
+        // معالجة النصوص للـ PDF (دون لمس أصل البيانات لتجنب خطأ UTF-8)
+        $pdfData = $data->map(function ($item) use ($arabic) {
+            $item->pdf_name = $arabic->utf8Glyphs($item->full_name);
+            $item->pdf_employee = $arabic->utf8Glyphs($item->employee_name ?? auth()->user()->name);
+            $item->pdf_type = ($item->type == 'sale') ? $arabic->utf8Glyphs("بيع") : $arabic->utf8Glyphs("شراء");
+            return $item;
+        });
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.report', [
+            'pdf' => $pdfData,
             'arabic' => $arabic
         ]);
 
         $pdf->setPaper('A4', 'landscape');
 
-        // استخدام الـ Response لفرض نوع الملف PDF
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
         }, $fileName, [
