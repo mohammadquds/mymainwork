@@ -57,7 +57,7 @@
                             style="display: none;">
 
                             <div class="p-1">
-                                <a href="{{ route('reports.viewpdf') }}" target="_blank"
+                                {{-- <a href="{{ route('reports.viewpdf') }}" target="_blank"
                                     class="group flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-lg">
                                     <span class="text-lg"></span>
                                     <span>(PDF)عرض تقرير</span>
@@ -67,14 +67,22 @@
                                     class="group flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-lg">
                                     <span class="text-lg"></span>
                                     <span>(PDF)تحميل تقرير</span>
-                                </a>
+                                </a> --}}
 
                                 <div class="my-1 border-t border-gray-100"></div>
 
                                 <button @click="$dispatch('triggerExcelModal'); open = false"
-                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-lg text-right">
+                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-100 transition-colors rounded-lg text-right">
                                     <span class="text-lg"></span>
-                                    <span>(Excel)نقل إلى إكسل</span>
+                                    <span>نقل إلى إكسل(Excel)</span>
+                                </button>
+
+                                <div class="my-1 border-t border-gray-100"></div>
+
+                                <button @click="$dispatch('triggerPdfModal'); open = false"
+                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-red-100 transition-colors rounded-lg text-right">
+                                    <span class="text-lg"></span>
+                                    <span>نقل إلى (PDF)</span>
                                 </button>
                             </div>
                         </div>

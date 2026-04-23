@@ -31,6 +31,13 @@
                             <label class="ml-2 block text-sm text-gray-900">تذكرني</label>
                         </div>
 
+                        <div class="flex items-center justify-between">
+                            @if (Route::has('password.request'))
+                                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-3000 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
+                                    {{ __('نسيت كلمة المرور؟') }}
+                                </a>
+                            @endif
+                        </div>
 
                         <button type="submit"
                             class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition duration-150">
