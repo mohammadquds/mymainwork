@@ -84,33 +84,30 @@ class RegisterAccount extends Component
             }
         }
 
-   // ----------------------------------------------------
-        // 1. DETERMINE DATES, STATUS, AND BOSS (ADMIN_ID)
-        // ----------------------------------------------------
+//  here will check if the new user came by an active super admin he will follow his boss but if he entered from generel url he will be admin with 3 days subscription
+
         $startDate = null;
         $endDate = null;
         $status = 'active';
         $assignedBossId = null;
 
         if ($admin) {
-            // SCENARIO A: They used an invite link!
-            // They are an employee. They share their boss's dates.
+            //  They used an invite link
+
             $startDate = $admin->start_date;
             $endDate = $admin->end_date;
             $status = $admin->status ?? 'active';
             $assignedBossId = $admin->id;
         } else {
-            // SCENARIO B: They signed up on the public website!
-            // They are a new Shop Owner. Give them a 3-day trial.
+            //  They signed up on the public website
+
             $startDate = now();
             $endDate = now()->addDays(3);
             $status = 'active';
-            $assignedBossId = null; // No boss! They are independent.
+            $assignedBossId = null;
         }
 
-        // ----------------------------------------------------
-        // 2. CREATE THE USER IN THE DATABASE
-        // ----------------------------------------------------
+
         $user = User::create([
             'name' => $this->name,
             'email' => $this->sign_email,
@@ -122,14 +119,12 @@ class RegisterAccount extends Component
             'status' => $status,
         ]);
 
-        // ----------------------------------------------------
-        // 3. ASSIGN THE CORRECT ROLE
-        // ----------------------------------------------------
+
         if ($assignedBossId === null) {
-            // If they have no boss, they MUST be the Admin (Shop Owner)
+
             $user->assignRole('Admin');
         } else {
-            // If they have a boss, they are a standard employee
+
             $user->assignRole('user');
         }
 
