@@ -79,7 +79,33 @@
                             <p class="text-sm font-bold text-slate-800">{{ $user->manager->name ?? 'System' }}</p>
                         </div>
                     </div>
+{{-- Subscription & Roles --}}
+                    <div class="flex items-center justify-around w-full md:w-2/4 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
+                        {{-- تفعيل وإلغاء الاشتراك --}}
+                        <div class="flex items-center gap-2" @click.stop="">
+                            @if($user->id !== auth()->id())
+                                @can('subscription.view')
+                                    <div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
+                                        <input type="date" wire:model="selectedDates.{{ $user->id }}" class="border-none bg-transparent text-[10px] p-1 focus:ring-0 text-slate-600 font-bold">
+                                        <button wire:click.stop="grantAccess({{ $user->id }})" class="bg-green-600 text-white px-3 py-1 rounded-lg text-[10px] font-black hover:bg-green-700 transition-colors">تفعيل</button>
+                                    </div>
+                                @endcan
 
+                                @can('subscription.unactive.view')
+                                    <button wire:click.stop="cancelSubscription({{ $user->id }})" 
+                                            wire:confirm="تنبيه: سيتم إغلاق اشتراك هذا الحساب، هل أنت متأكد؟"
+                                            class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[10px] font-black hover:bg-red-600 hover:text-white transition-all">إلغاء التفعيل</button>
+                                @endcan
+                            @else
+                                <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-3 py-1 rounded-full italic">اشتراكك الشخصي نشط</span>
+                            @endif
+                        </div>
+
+                        <div class="text-center hidden lg:block">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">المشرف</p>
+                            <p class="text-xs font-bold text-slate-800">{{ $user->manager->name ?? 'System' }}</p>
+                        </div>
+                    </div>
                     {{-- Actions & Toggle --}}
                     <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
                         <div class="flex gap-2">
@@ -131,6 +157,28 @@
                                             wire:confirm="حذف الموظف ({{ $child->name }})؟"
                                             class="text-[10px] font-bold text-red-500 hover:underline">حذف</button>
                                     @endcan
+                                    {{-- Subscription & Roles --}}
+                    <div class="flex items-center justify-around w-full md:w-2/4 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
+                        {{-- تفعيل وإلغاء الاشتراك --}}
+                        <div class="flex items-center gap-2" @click.stop="">
+                            @if($child->id !== auth()->id())
+                                @can('subscription.view')
+                                    <div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
+                                        <input type="date" wire:model="selectedDates.{{ $child->id }}" class="border-none bg-transparent text-[10px] p-1 focus:ring-0 text-slate-600 font-bold">
+                                        <button wire:click.stop="grantAccess({{ $child->id }})" class="bg-green-600 text-white px-3 py-1 rounded-lg text-[10px] font-black hover:bg-green-700 transition-colors">تفعيل</button>
+                                    </div>
+                                @endcan
+
+                                @can('subscription.unactive.view')
+                                    <button wire:click.stop="cancelSubscription({{ $child->id }})" 
+                                            wire:confirm="تنبيه: سيتم إغلاق اشتراك هذا الحساب، هل أنت متأكد؟"
+                                            class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[10px] font-black hover:bg-red-600 hover:text-white transition-all">إلغاء التفعيل</button>
+                                @endcan
+                            @else
+                                <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-3 py-1 rounded-full italic">اشتراكك الشخصي نشط</span>
+                            @endif
+                        </div>
+                    </div>
                                 </div>
                             </div>
                         @endforeach
