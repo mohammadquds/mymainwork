@@ -24,7 +24,6 @@ class HomePage extends Component
     public $startDate;
     public $endDate;
     public $showExcelModal = false;
-    public $showPdfModal = false;
 
 
 
@@ -48,40 +47,47 @@ class HomePage extends Component
         $pdf = form::whereIn('user_id', $allowedIds)->get();
         return view('reports.index', compact('pdf'));
     }
-    public function generatePdf()
-    {
-        return $this->handlePdfAction('download');
-    }
     public function viewPdf()
     {
-        return $this->handlePdfAction('stream');
+        // جلب البيانات ومعالجتها للعربية
+        $pdfData = $this->prepareArabicData();
+
+        $pdf = Pdf::loadView('pdf.report', ['pdf' => $pdfData]);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->stream('report.pdf');
     }
 
-    /**
-     * دالة موحدة للتعامل مع الـ PDF لضمان الخصوصية والاحترافية
-     */
-    private function handlePdfAction($action)
+
+
+    public function generatePdf()
     {
-        $arabic = new \ArPHP\I18N\Arabic();
+        // جلب البيانات ومعالجتها للعربية
+        $pdfData = $this->prepareArabicData();
 
-        // 1. الخصوصية والفلترة الزمنية (صاحب الحساب + الفتره المحدده)
-        $sales =    form::where('user_id', auth()->id());
+        $pdf = Pdf::loadView('pdf.report', ['pdf' => $pdfData]);
+        $pdf->setPaper('A4', 'landscape');
+        return $pdf->download('gold_report.pdf');
+    }
+    // دالة مساعدة لمعالجة النصوص العربية في الجدول بالكامل
+    private function prepareArabicData()
+    {
 
-        if ($this->startDate) {
-            $sales->whereDate('created_at', '>=', $this->startDate);
-        }
-        if ($this->endDate) {
-            $sales->whereDate('created_at', '<=', $this->endDate);
-        }   
+        $arabic = new Arabic();
+        $allowedIds = $this->getAllowedUserIds();
 
-         $sales = $sales->orderBy('created_at', 'asc')->get();  
+        // SECURITY FIX: Filter PDF data
+        $sales = form::whereIn('user_id', $allowedIds)->get();
 
 
-        // 2. معالجة النصوص العربية باحترافية
-        $pdfData = $sales->map(function ($item) use ($arabic) {
-            $item->full_name = $arabic->utf8Glyphs($item->full_name);
-            $item->employee_name = $arabic->utf8Glyphs($item->employee_name);
-            
+
+        // نقوم بالمرور على كل سجل وتعديل النصوص العربية فيه
+        return $sales->map(function ($item) use ($arabic) {
+            // نستخدم utf8Glyphs لربط الحروف ببعضها
+            $item->customer_name = $arabic->utf8Glyphs($item->customer_name);
+            $item->staff_name = $arabic->utf8Glyphs($item->staff_name);
+            $item->shop_name = $arabic->utf8Glyphs($item->shop_name);
+
+            // إذا كان نوع العملية (بيع/شراء) مكتوب بالعربي
             if ($item->type == 'sale')
                 $item->display_type = $arabic->utf8Glyphs("بيع");
             else
@@ -89,19 +95,7 @@ class HomePage extends Component
 
             return $item;
         });
-
-        // 3. إنشاء الملف
-        $pdf = Pdf::loadView('pdf.report', [
-            'pdf' => $pdfData,
-            'arabic' => $arabic
-        ]);
-        
-        $pdf->setPaper('A4', 'landscape');
-        $fileName = 'gold_report_' . now()->format('m_Y') . '.pdf';
-
-        return ($action == 'download') ? $pdf->download($fileName) : $pdf->stream($fileName);
     }
-    
 
 
     public function viewSinglePdf($id)
@@ -145,55 +139,6 @@ class HomePage extends Component
         return Excel::download(new SalesExport($this->startDate, $this->endDate, $allowedIds), $fileName);
     }
 
-    #[On('triggerPdfModal')]
-    public function openPdfModal()
-    {
-        $this->showPdfModal = true;
-    }
-
-    public function closePdfModal()
-    {
-        $this->showPdfModal = false;
-    }
-
-    public function exportPdf()
-    {
-        $fileName = 'sales_' . now()->format('Y_m_d_His') . '.pdf';
-        $arabic = new \ArPHP\I18N\Arabic();
-
-        // القوة هنا: نلغي $allowedIds ونستخدم ID المستخدم الحالي حصراً
-        $data = \App\Models\form::where('user_id', auth()->id()) 
-            ->when($this->startDate, fn($query) => $query->whereDate('created_at', '>=', $this->startDate))
-            ->when($this->endDate, fn($query) => $query->whereDate('created_at', '<=', $this->endDate))
-            // إذا لم يحدد تاريخ، نكتفي بالشهر الحالي لضمان خفة الملف
-            ->when(!$this->startDate && !$this->endDate, function($query) {
-                $query->whereMonth('created_at', now()->month)
-                    ->whereYear('created_at', now()->year);
-            })
-            ->orderBy('created_at', 'asc')
-            ->get();
-
-        // معالجة النصوص للـ PDF (دون لمس أصل البيانات لتجنب خطأ UTF-8)
-        $pdfData = $data->map(function ($item) use ($arabic) {
-            $item->pdf_name = $arabic->utf8Glyphs($item->full_name);
-            $item->pdf_employee = $arabic->utf8Glyphs($item->employee_name ?? auth()->user()->name);
-            $item->pdf_type = ($item->type == 'sale') ? $arabic->utf8Glyphs("بيع") : $arabic->utf8Glyphs("شراء");
-            return $item;
-        });
-
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.report', [
-            'pdf' => $pdfData,
-            'arabic' => $arabic
-        ]);
-
-        $pdf->setPaper('A4', 'landscape');
-
-        return response()->streamDownload(function () use ($pdf) {
-            echo $pdf->output();
-        }, $fileName, [
-            'Content-Type' => 'application/pdf',
-        ]);
-    }
 
     #[On('sale-added')]
     public function refreshSales()
@@ -256,7 +201,7 @@ class HomePage extends Component
     {
 // Get the list of IDs this person is allowed to see
         $allowedIds = $this->getAllowedUserIds();
-        $salesQuery = form::where('user_id', auth()->id());
+        $salesQuery = form::whereIn('user_id', $allowedIds);
 
         if (!empty($this->search)) {
             $salesQuery->where(function ($query) {

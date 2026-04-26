@@ -185,7 +185,7 @@
                                 </path>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-bold text-white">تصدير إلى Excel</h3>
+                        <h3 class="text-lg font-bold text-amber-400">تصدير إلى إكسل</h3>
                     </div>
                     <button wire:click="closeExcelModal" class="text-slate-400 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,68 +234,7 @@
         </div>
     @endif
 
-    {{-- PDF --}}
-    @if($showPdfModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all"
-            dir="rtl">
-            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-                <div class="bg-slate-900 p-5 flex justify-between items-center text-white">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-slate-800 rounded-lg text-red-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                                </path>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-bold text-white">تصدير إلى PDF</h3>
-                    </div>
-                    <button wire:click="closePdfModal" class="text-slate-400 hover:text-white transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                            </path>
-                        </svg>
-                    </button>
-                </div>
 
-                <div class="p-6 space-y-6">
-                    <p class="text-sm text-slate-500">حدد الفترة الزمنية التي ترغب في تصدير بياناتها.</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">من تاريخ</label>
-                            <input type="date" wire:model="startDate"
-                                class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-amber-500 focus:border-amber-500 shadow-sm transition-all bg-slate-50">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 uppercase">إلى تاريخ</label>
-                            <input type="date" wire:model="endDate"
-                                class="w-full border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:ring-amber-500 focus:border-amber-500 shadow-sm transition-all bg-slate-50">
-                        </div>
-                    </div>
-                    @if($startDate || $endDate)
-                        <button wire:click="$set('startDate', null); $set('endDate', null)"
-                            class="text-xs text-red-500 hover:text-red-700 font-bold flex items-center gap-1 transition-colors mt-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                            مسح التواريخ
-                        </button>
-                    @endif
-                </div>
-
-                <div
-                    class="bg-slate-50 p-6 flex flex-col md:flex-row-reverse justify-start gap-3 border-t border-slate-100">
-                    <button wire:click="exportPdf"
-                        class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white px-8 py-2.5 rounded-xl font-bold shadow-md transition-all">تأكيد
-                        التصدير</button>
-                    <button wire:click="closePdfModal"
-                        class="w-full md:w-auto bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 px-6 py-2.5 rounded-xl font-bold transition-all shadow-sm">إلغاء</button>
-                </div>
-            </div>
-        </div>
-    @endif
     {{-- INVOICE DETAILS --}}
     @if($showModal && $selectedSale)
         <div wire:key="invoice-modal-{{ $selectedSale->id }}"

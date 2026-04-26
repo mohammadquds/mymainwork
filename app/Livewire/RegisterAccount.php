@@ -84,37 +84,52 @@ class RegisterAccount extends Component
             }
         }
 
+   // ----------------------------------------------------
+        // 1. DETERMINE DATES, STATUS, AND BOSS (ADMIN_ID)
+        // ----------------------------------------------------
         $startDate = null;
         $endDate = null;
         $status = 'active';
+        $assignedBossId = null;
 
-        if ($isSuperAdminInvite) {
-            $startDate = now();
-            $endDate = now()->addDays(3);
-        } elseif ($admin) {
-
+        if ($admin) {
+            // SCENARIO A: They used an invite link!
+            // They are an employee. They share their boss's dates.
             $startDate = $admin->start_date;
             $endDate = $admin->end_date;
             $status = $admin->status ?? 'active';
+            $assignedBossId = $admin->id;
+        } else {
+            // SCENARIO B: They signed up on the public website!
+            // They are a new Shop Owner. Give them a 3-day trial.
+            $startDate = now();
+            $endDate = now()->addDays(3);
+            $status = 'active';
+            $assignedBossId = null; // No boss! They are independent.
         }
 
-        //  CREATE THE USER
+        // ----------------------------------------------------
+        // 2. CREATE THE USER IN THE DATABASE
+        // ----------------------------------------------------
         $user = User::create([
             'name' => $this->name,
             'email' => $this->sign_email,
             'company_name' => $this->company_name,
             'password' => Hash::make($this->sign_password),
-            'admin_id' => $admin ? $admin->id : null,
+            'admin_id' => $assignedBossId,
             'start_date' => $startDate,
             'end_date' => $endDate,
             'status' => $status,
         ]);
 
-        if ($isSuperAdminInvite) {
-            // If invited by a Super Admin, they become an Admin
+        // ----------------------------------------------------
+        // 3. ASSIGN THE CORRECT ROLE
+        // ----------------------------------------------------
+        if ($assignedBossId === null) {
+            // If they have no boss, they MUST be the Admin (Shop Owner)
             $user->assignRole('Admin');
         } else {
-            // If invited by anyone else or no one they become a standard user
+            // If they have a boss, they are a standard employee
             $user->assignRole('user');
         }
 
