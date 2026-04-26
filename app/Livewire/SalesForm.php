@@ -158,7 +158,7 @@ class SalesForm extends Component
         return $allowedIds;
     }
 
-    public function save()
+public function save()
     {
         $this->validate();
 
@@ -167,8 +167,28 @@ class SalesForm extends Component
             $imagePath = $this->product_image->store('products', 'public');
         }
 
+    
+        $user = auth()->user();
+        $topBossId = $user->admin_id ? $user->admin_id : $user->id;
+        $topBoss = \App\Models\User::find($topBossId);
+
+        $companyUserIds = [$topBoss->id];
+        if ($topBoss->children && $topBoss->children->count() > 0) {
+            $companyUserIds = array_merge($companyUserIds, $topBoss->children->pluck('id')->toArray());
+        }
+
+        // Find the highest invoice number this company has used so far
+        $highestInvoice = form::whereIn('user_id', $companyUserIds)->max('invoice_number');
+
+        // If they have one, add 1. If this is their first sale, start at 1!
+        $newInvoiceNumber = $highestInvoice ? $highestInvoice + 1 : 1;
+
+
+
+
         form::create([
             'user_id' => auth()->id(),
+            'invoice_number' => $newInvoiceNumber,
             'full_name' => $this->full_name,
             'national_id' => $this->national_id,
             'date_of_birth' => $this->date_of_birth,

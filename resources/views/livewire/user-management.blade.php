@@ -133,7 +133,7 @@
                         @endif
                     </div>
                 </div>
- 
+
       {{-- Children Section (Employees) --}}
                 @if($user->children && $user->children->count() > 0)
                     <div x-show="expanded" x-collapse x-cloak class="bg-slate-50 border-t border-slate-100 p-4 space-y-3">
@@ -149,6 +149,7 @@
                                     </div>
                                 </div>
 
+                                
                                 {{-- 2. Roles & Manager --}}
                                 <div class="flex items-center justify-around w-full md:w-1/3 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
                                     <div class="text-center">

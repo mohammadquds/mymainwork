@@ -59,7 +59,7 @@ class SalesExport implements FromQuery, WithHeadings, WithMapping, WithEvents
     {
         return [
             $sale->created_at->format('Y-m-d H:i'),
-            $sale->id,
+            $sale->invoice_number,
             $sale->full_name,
             ' ' . $sale->national_id,
             $sale->weight,

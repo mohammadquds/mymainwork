@@ -14,7 +14,7 @@
 <body>
     <div class="header">
         {{-- <h1>{{ $arabic->utf8Glyphs('تقرير ') }}</h1> --}}
-        <p> <strong>{{ $sale->id }}  </strong>   {{ $arabic->utf8Glyphs('رقم الفاتورة:') }} </p>
+        <p> <strong>{{ $sale->invoice_number}}  </strong>   {{ $arabic->utf8Glyphs('رقم الفاتورة:') }} </p>
         <p> <strong> {{ $sale->created_at->format('Y-m-d') }} </strong>  {{ $arabic->utf8Glyphs('التاريخ:') }} </p>
     </div>
 

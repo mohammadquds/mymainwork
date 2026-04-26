@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class form extends Model
 {
     protected $fillable = [
-    'user_id', 
+    'user_id',
+    'invoice_number',
     'full_name',
     'national_id',
     'id_version_number',

@@ -52,7 +52,7 @@
                 <td>{{ $item->karat }}</td>
                 <td>{{ $item->national_id }}</td>
                 <td class="arabic-text">{{$arabic->utf8Glyphs($item->full_name) }}</td>
-                <td>{{ $item->id }}</td>
+                <td>{{ $item->invoice_number }}</td>
                 <td>{{ $item->created_at->format('Y-m-d') }}</td>
             </tr>
             @endforeach

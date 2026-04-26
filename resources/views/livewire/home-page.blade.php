@@ -317,7 +317,7 @@
                             </svg>
                         </div>
                         <h3 class="text-sm font-black text-white">فاتورة <span
-                                class="text-amber-400 font-mono">#{{ $selectedSale->id }}</span></h3>
+                                class="text-amber-400 font-mono">#{{ $selectedSale->invoice_number }}</span></h3>
                     </div>
                     <button wire:click="closeModal"
                         class="text-slate-400 hover:text-white bg-slate-800 p-1.5 rounded-full border border-slate-700 transition-colors">
@@ -426,7 +426,7 @@
                                     class="w-full bg-white p-2.5 rounded-lg border border-slate-200 shadow-sm flex justify-between items-center hover:border-amber-400 transition-colors focus:outline-none">
                                     <div class="text-right">
                                         <span class="text-[11px] font-black text-slate-800 block">طلب <span
-                                                class="text-amber-600">#{{ $order->id }}</span></span>
+                                                class="text-amber-600">#{{ $order->invoice_number }}</span></span>
                                     </div>
                                     <div class="flex items-center gap-3 text-left">
                                         <div>
