@@ -44,10 +44,10 @@
     <div class="space-y-3">
         @foreach($users as $user)
             <div x-data="{ expanded: false }" class="group bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-400 hover:shadow-md transition-all duration-200">
-                
+
                 {{-- Main Row --}}
                 <div @click="expanded = !expanded" class="p-4 flex flex-col md:flex-row items-center justify-between gap-4 cursor-pointer">
-                    
+
                     {{-- # ID & Name --}}
                     <div class="flex items-center gap-4 w-full md:w-1/3">
                         <div class="bg-slate-50 border border-slate-100 text-slate-500 w-12 h-12 rounded-xl flex items-center justify-center font-black shadow-sm group-hover:bg-amber-100 group-hover:text-amber-700 transition-colors text-xs text-center leading-none">
@@ -56,7 +56,7 @@
                         <div>
                             <h3 class="font-bold text-slate-900 group-hover:text-amber-600 transition-colors flex items-center gap-2">
                                 {{ $user->name }}
-                                @if($user->id === auth()->id()) 
+                                @if($user->id === auth()->id())
                                     <span class="bg-indigo-100 text-indigo-700 text-[10px] px-2 py-0.5 rounded-lg font-bold">(أنت)</span>
                                 @endif
                             </h3>
@@ -92,7 +92,7 @@
                                 @endcan
 
                                 @can('subscription.unactive.view')
-                                    <button wire:click.stop="cancelSubscription({{ $user->id }})" 
+                                    <button wire:click.stop="cancelSubscription({{ $user->id }})"
                                             wire:confirm="تنبيه: سيتم إغلاق اشتراك هذا الحساب، هل أنت متأكد؟"
                                             class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[10px] font-black hover:bg-red-600 hover:text-white transition-all">إلغاء التفعيل</button>
                                 @endcan
@@ -100,12 +100,9 @@
                                 <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-3 py-1 rounded-full italic">اشتراكك الشخصي نشط</span>
                             @endif
                         </div>
-
-                        <div class="text-center hidden lg:block">
-                            <p class="text-[10px] text-slate-400 font-bold uppercase mb-1">المشرف</p>
-                            <p class="text-xs font-bold text-slate-800">{{ $user->manager->name ?? 'System' }}</p>
-                        </div>
                     </div>
+
+
                     {{-- Actions & Toggle --}}
                     <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
                         <div class="flex gap-2">
@@ -114,11 +111,11 @@
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                 </button>
                             @endcan
-                            
+
                             @if($user->id !== auth()->id())
                                 @can('user.delete')
-                                    <button 
-                                        wire:click.stop="delete({{ $user->id }})" 
+                                    <button
+                                        wire:click.stop="delete({{ $user->id }})"
                                         wire:confirm="هل أنت متأكد تماماً من حذف المستخدم ({{ $user->name }})؟ لا يمكن التراجع عن هذه العملية."
                                         class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
@@ -126,7 +123,7 @@
                                 @endcan
                             @endif
                         </div>
-                        
+
                         @if($user->children && $user->children->count() > 0)
                             <div class="text-slate-300 transition-transform duration-300" :class="expanded ? 'rotate-180 text-amber-500' : ''">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -137,49 +134,78 @@
                     </div>
                 </div>
 
-                {{-- Children Section (Employees) --}}
+      {{-- Children Section (Employees) --}}
                 @if($user->children && $user->children->count() > 0)
-                    <div x-show="expanded" x-collapse x-cloak class="bg-slate-50 border-t border-slate-100 p-4 space-y-2">
+                    <div x-show="expanded" x-collapse x-cloak class="bg-slate-50 border-t border-slate-100 p-4 space-y-3">
                         @foreach($user->children as $child)
-                            <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-100 mr-8 shadow-sm">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-1 h-6 bg-amber-400 rounded-full"></div>
-                                    <p class="text-sm font-bold text-slate-800">{{ $child->name }}</p>
-                                    <p class="text-[10px] text-slate-400 font-mono italic">{{ $child->email }}</p>
-                                </div>
-                                <div class="flex gap-4 items-center">
-                                    @can('user.edit')
-                                        <button wire:click.stop="edit({{ $child->id }})" class="text-[10px] font-bold text-indigo-600 hover:underline">تعديل</button>
-                                    @endcan
-                                    @can('user.delete')
-                                        <button 
-                                            wire:click.stop="delete({{ $child->id }})" 
-                                            wire:confirm="حذف الموظف ({{ $child->name }})؟"
-                                            class="text-[10px] font-bold text-red-500 hover:underline">حذف</button>
-                                    @endcan
-                                    {{-- Subscription & Roles --}}
-                    <div class="flex items-center justify-around w-full md:w-2/4 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
-                        {{-- تفعيل وإلغاء الاشتراك --}}
-                        <div class="flex items-center gap-2" @click.stop="">
-                            @if($child->id !== auth()->id())
-                                @can('subscription.view')
-                                    <div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
-                                        <input type="date" wire:model="selectedDates.{{ $child->id }}" class="border-none bg-transparent text-[10px] p-1 focus:ring-0 text-slate-600 font-bold">
-                                        <button wire:click.stop="grantAccess({{ $child->id }})" class="bg-green-600 text-white px-3 py-1 rounded-lg text-[10px] font-black hover:bg-green-700 transition-colors">تفعيل</button>
-                                    </div>
-                                @endcan
+                            <div class="flex flex-col md:flex-row items-center justify-between bg-white p-4 rounded-xl border border-slate-200 mr-2 md:mr-8 shadow-sm gap-4 hover:border-amber-300 transition-colors">
 
-                                @can('subscription.unactive.view')
-                                    <button wire:click.stop="cancelSubscription({{ $child->id }})" 
-                                            wire:confirm="تنبيه: سيتم إغلاق اشتراك هذا الحساب، هل أنت متأكد؟"
-                                            class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[10px] font-black hover:bg-red-600 hover:text-white transition-all">إلغاء التفعيل</button>
-                                @endcan
-                            @else
-                                <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-3 py-1 rounded-full italic">اشتراكك الشخصي نشط</span>
-                            @endif
-                        </div>
-                    </div>
+                                {{-- 1. Name & Email --}}
+                                <div class="flex items-center gap-3 w-full md:w-1/3">
+                                    <div class="w-1.5 h-10 bg-amber-400 rounded-full shrink-0"></div>
+                                    <div class="flex flex-col min-w-0">
+                                        <p class="text-base font-black text-slate-800 truncate">{{ $child->name }}</p>
+                                        <p class="text-xs text-slate-500 font-mono truncate">{{ $child->email }}</p>
+                                    </div>
                                 </div>
+
+                                {{-- 2. Roles & Manager --}}
+                                <div class="flex items-center justify-around w-full md:w-1/3 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
+                                    <div class="text-center">
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">الصلاحية</p>
+                                        @forelse($child->roles as $role)
+                                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700">
+                                                {{ $role->name }}
+                                            </span>
+                                        @empty
+                                            <span class="text-[10px] text-slate-400">لا يوجد</span>
+                                        @endforelse
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">المشرف</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ $child->manager->name ?? $user->name }}</p>
+                                    </div>
+                                </div>
+
+                                {{-- 3. Subscription --}}
+                                <div class="flex items-center justify-around w-full md:w-2/4 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
+                                    <div class="flex items-center gap-2" @click.stop="">
+                                        @if($child->id !== auth()->id())
+                                            @can('subscription.view')
+                                                <div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
+                                                    <input type="date" wire:model="selectedDates.{{ $child->id }}" class="border-none bg-transparent text-[10px] p-1 focus:ring-0 text-slate-600 font-bold">
+                                                    <button wire:click.stop="grantAccess({{ $child->id }})" class="bg-green-600 text-white px-3 py-1 rounded-lg text-[10px] font-black hover:bg-green-700 transition-colors">تفعيل</button>
+                                                </div>
+                                            @endcan
+                                            @can('subscription.unactive.view')
+                                                <button wire:click.stop="cancelSubscription({{ $child->id }})"
+                                                        wire:confirm="تنبيه: سيتم إغلاق اشتراك هذا الحساب، هل أنت متأكد؟"
+                                                        class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[10px] font-black hover:bg-red-600 hover:text-white transition-all">إلغاء التفعيل</button>
+                                            @endcan
+                                        @else
+                                            <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-3 py-1 rounded-full italic">اشتراكك الشخصي نشط</span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                {{-- 4. Actions (Edit / Delete) --}}
+                                <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
+                                    <div class="flex gap-2">
+                                        @can('user.edit')
+                                            <button wire:click.stop="edit({{ $child->id }})" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                            </button>
+                                        @endcan
+                                        @can('user.delete')
+                                            <button wire:click.stop="delete({{ $child->id }})" wire:confirm="حذف الموظف ({{ $child->name }})؟" class="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                            </button>
+                                        @endcan
+                                    </div>
+                                    {{-- Invisible spacer to match the parent's dropdown arrow width --}}
+                                    <div class="w-6"></div>
+                                </div>
+
                             </div>
                         @endforeach
                     </div>
