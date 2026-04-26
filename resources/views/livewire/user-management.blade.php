@@ -133,7 +133,7 @@
                         @endif
                     </div>
                 </div>
-
+ 
       {{-- Children Section (Employees) --}}
                 @if($user->children && $user->children->count() > 0)
                     <div x-show="expanded" x-collapse x-cloak class="bg-slate-50 border-t border-slate-100 p-4 space-y-3">
