@@ -114,27 +114,40 @@
                         <option value="18">عيار 18</option>
                     </select>
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">الوزن (جرام)</label>
-                    <input x-model="weight" type="number" step="0.01" min="0" placeholder="0.00" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:ring-2 focus:ring-yellow-500 focus:bg-white transition">
+                    <input x-model="weight" type="text" inputmode="decimal" min="0" placeholder="0.00"
+                           oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9.]/g, '')"
+                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:ring-2 focus:ring-yellow-500 focus:bg-white transition">
                 </div>
+
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">سعر الشراء (للجرام)</label>
-                    <input x-model="sale_price" type="number" step="0.01" placeholder="0.00" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:ring-2 focus:ring-yellow-500 focus:bg-white transition">
+                    <input x-model="sale_price" type="text" inputmode="decimal" placeholder="0.00"
+                           oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9.]/g, '')"
+                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:ring-2 focus:ring-yellow-500 focus:bg-white transition">
                 </div>
+
                 <div>
                     <label class="block text-xs font-bold text-gray-600 mb-1">التكلفة للجرام (اختياري)</label>
-                    <input x-model="cost_per_gram" type="number" step="0.01" placeholder="0.00" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:ring-2 focus:ring-yellow-500 focus:bg-white transition">
+                    <input x-model="cost_per_gram" type="text" inputmode="decimal" placeholder="0.00"
+                           oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9.]/g, '')"
+                           class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:ring-2 focus:ring-yellow-500 focus:bg-white transition">
                 </div>
+
             </div>
 
             <div>
                 <label class="block text-xs font-bold text-gray-600 mb-1">خصم إضافي (%)</label>
-                <input x-model="discount" type="number" min="0" max="100" placeholder="0" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:ring-2 focus:ring-yellow-500 focus:bg-white transition">
+                <input x-model="discount" type="text" inputmode="numeric" min="0" max="100" placeholder="0"
+                       oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9.]/g, '')"
+                       class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-800 focus:ring-2 focus:ring-yellow-500 focus:bg-white transition">
             </div>
+            
         </div>
 
         <div class="mt-6 p-5 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl border border-yellow-200">
