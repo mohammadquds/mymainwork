@@ -16,7 +16,7 @@
                     {{-- HEADER --}}
                     <div
                         class="shrink-0 bg-slate-900 p-4 flex justify-between items-center text-white border-b border-amber-500/20 rounded-t-3xl z-20">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3"> 
                             <div class="p-1.5 bg-slate-800 rounded-lg text-amber-400 border border-slate-700">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -41,7 +41,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 mb-1">الهوية (10 أرقام)</label>
-                                <input type="text" wire:model.live.debounce.500ms="national_id" maxlength="10"
+                                <input type="text" inputmode="numeric" wire:model.live.debounce.500ms="national_id" maxlength="10"
+                                    oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9]/g, '')"
                                     style="font-size: 16px;"
                                     class="w-full border border-slate-300 focus:border-amber-500 focus:ring-amber-500 rounded-xl shadow-sm px-3 py-2.5 transition-colors">
                                 @if($isExistingCustomer) <span
@@ -60,9 +61,10 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 mb-1">رقم النسخة للهوية</label>
-                                <input type="text" wire:model="id_version_number" maxlength="2" @if($isExistingCustomer)
-                                disabled @endif style="font-size: 16px;"
-                                    class="w-full border border-slate-300 focus:border-amber-500 focus:ring-amber-500 rounded-xl shadow-sm px-3 py-2.5 {{ $isExistingCustomer ? 'bg-slate-100 opacity-70' : '' }}">
+                               <input type="text" inputmode="numeric" wire:model="id_version_number" maxlength="2" @if($isExistingCustomer) disabled @endif
+                                oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9]/g, '')"
+                                style="font-size: 16px;"
+                                class="w-full border border-slate-300 focus:border-amber-500 focus:ring-amber-500 rounded-xl shadow-sm px-3 py-2.5 {{ $isExistingCustomer ? 'bg-slate-100 opacity-70' : '' }}">
                                 @error('id_version_number') <span
                                 class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
                             </div>
@@ -82,17 +84,19 @@
 
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 mb-1">الوزن (جرام)</label>
-                                <input type="number" step="0.01" wire:model.live.debounce.500ms="weight"
-                                    style="font-size: 16px;"
-                                    class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
+                             <input type="text" inputmode="decimal" wire:model.live.debounce.500ms="weight"
+                                oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9.]/g, '')"
+                                style="font-size: 16px;"
+                                class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
                                 @error('weight') <span
                                 class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="block text-sm font-bold text-slate-700 mb-1">سعر الشراء</label>
-                                <input type="number" step="0.01" wire:model.live.debounce.500ms="sale_price"
-                                    style="font-size: 16px;"
-                                    class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
+                              <input type="text" inputmode="decimal" wire:model.live.debounce.500ms="sale_price"
+                                oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9.]/g, '')"
+                                style="font-size: 16px;"
+                                class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
                                 @error('sale_price') <span
                                 class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
                                 <div
