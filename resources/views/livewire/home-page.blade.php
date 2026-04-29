@@ -469,4 +469,53 @@
     @endif
 
     <livewire:sales-form />
+
+
+    {{-- the pop up of the vat and company number--}}
+    @if($showOnboardingModal)
+        <div class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" dir="rtl">
+            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden relative animate-in zoom-in-95 duration-300">
+
+                {{--  CLOSE BUTTON (X) --}}
+                <button wire:click="closeOnboardingModal" class="absolute top-4 left-4 text-slate-400 hover:text-white z-10 p-2 bg-slate-800/40 hover:bg-slate-700 rounded-full transition-colors cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                {{-- Header --}}
+                <div class="bg-slate-900 p-6 pt-8 text-center border-b border-amber-500/20 relative">
+                    <div class="w-16 h-16 bg-amber-500 rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg shadow-amber-500/30">
+                        <svg class="w-8 h-8 text-slate-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-black text-white mb-1">تذكير بإكمال البيانات</h3>
+                    <p class="text-sm text-slate-400">لإصدار الفواتير بشكل قانوني، يرجى إكمال بيانات منشأتك. يمكنك تجاوز هذه الخطوة مؤقتاً.</p>
+                </div>
+
+                {{-- Form --}}
+                <form wire:submit.prevent="saveCompanyDetails" class="p-6 space-y-5">
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">  رقم الموحد\ رقم السجل التجاري <span class="text-red-500">*</span></label>
+                        <input wire:model="official_company_number" type="text" class="block w-full px-4 py-3 bg-slate-50 border-0 ring-1 ring-inset ring-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-inset focus:ring-amber-500 transition-all sm:text-sm text-left" dir="ltr" placeholder="مثال: 1010123456">
+                        @error('official_company_number') <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1.5">الرقم الضريبي (VAT) <span class="text-red-500">*</span></label>
+                        <input wire:model="vat_number" type="text" class="block w-full px-4 py-3 bg-slate-50 border-0 ring-1 ring-inset ring-slate-200 rounded-xl text-slate-900 focus:ring-2 focus:ring-inset focus:ring-amber-500 transition-all sm:text-sm text-left" dir="ltr" placeholder="مثال: 300012345600003">
+                        @error('vat_number') <span class="text-red-500 text-xs font-bold mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <div class="pt-2 flex gap-3">
+                        <button type="button" wire:click="closeOnboardingModal" class="w-1/3 py-3.5 px-4 rounded-xl text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-all">
+                            لاحقاً
+                        </button>
+                        <button type="submit" class="w-2/3 py-3.5 px-4 rounded-xl text-sm font-black text-slate-900 bg-amber-500 hover:bg-amber-400 shadow-lg shadow-amber-500/30 transition-all">
+                            حفظ البيانات
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    @endif
 </div>

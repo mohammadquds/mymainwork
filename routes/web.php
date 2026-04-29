@@ -13,6 +13,8 @@ use App\Livewire\UserManagement;
 use App\Livewire\RoleManagement;
 use App\Livewire\SalesForm;
 
+
+// ridirecting the pages to main page 
 Route::redirect('/login', '/');
 Route::redirect('/register', '/');
 Route::redirect('/dashboard', '/homePage');
@@ -49,3 +51,4 @@ Route::get('/subscription-expired', function () {
 
 });
 require __DIR__.'/settings.php';
+

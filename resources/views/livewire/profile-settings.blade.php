@@ -1,5 +1,5 @@
-<div class="w-full px-4 py-6  text-right border-collapse whitespace-nowrap" dir="rtl">
-    <div class="max-w-4xl mx-auto py-10 sm:px-6 lg:px-8">
+<div class="w-full px-4 py-6 text-right" dir="rtl">
+        <div class="max-w-4xl mx-auto py-10 sm:px-6 lg:px-8">
         <div class="bg-white shadow sm:rounded-lg p-8 border border-gray-200">
 
             <h2 class="text-2xl font-bold text-gray-900 mb-2">معلومات الحساب</h2>
@@ -94,5 +94,9 @@
                 <div class="border-t border-gray-200"></div>
             </div>
         </div>
+
+        {{--  BROWSER SESSIONS  --}}
+        <livewire:browser-sessions />
+
     </div>
 </div>

@@ -11,6 +11,8 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class HomePage extends Component
@@ -24,21 +26,47 @@ class HomePage extends Component
     public $startDate;
     public $endDate;
     public $showExcelModal = false;
-    public $showPdfModal = false;   
+    public $showPdfModal = false;
 
 
+    public $showOnboardingModal = false;
+    public $vat_number;
+    public $official_company_number;
 
-// here if you wanna see your search words in the url search bar also
-    //     protected function queryString() {
-    //     return [
-    //         'search' => [
-    //             'as' => 'q',
-    //             'history' => true,
-    //             'except' => ''
-    //         ]
-    //     ];
-    // }
 
+// here it will show the pop up of the vat number and others and after filling it it will disappear 
+public function mount(){
+    $user=Auth::user();
+
+    if ($user->hasRole('Admin')){
+        if(empty($user->vat_number) || empty($user->official_company_number)) {
+            $this->showOnboardingModal = true;
+
+        }
+    }
+}
+
+public function closeOnboardingModal()
+    {
+        $this->showOnboardingModal = false;
+    }
+
+public function saveCompanyDetails(){
+    $this->validate([
+        'vat_number' => 'required|max:20',
+        'official_company_number' => 'required|max:20',
+    ]);
+$user= Auth::user();
+
+$user->update([
+    'vat_number' => $this->vat_number,
+    'official_company_number' => $this->official_company_number,
+]);
+
+$this->showOnboardingModal = false;
+
+session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح! يمكنك الآن بدء المبيعات.');
+}
 
 
     public function index()
@@ -71,16 +99,16 @@ class HomePage extends Component
         }
         if ($this->endDate) {
             $sales->whereDate('created_at', '<=', $this->endDate);
-        }   
+        }
 
-         $sales = $sales->orderBy('created_at', 'asc')->get();  
+         $sales = $sales->orderBy('created_at', 'asc')->get();
 
 
         // 2. معالجة النصوص العربية باحترافية
         $pdfData = $sales->map(function ($item) use ($arabic) {
             $item->full_name = $arabic->utf8Glyphs($item->full_name);
             $item->employee_name = $arabic->utf8Glyphs($item->employee_name);
-            
+
             if ($item->type == 'sale')
                 $item->display_type = $arabic->utf8Glyphs("بيع");
             else
@@ -94,13 +122,13 @@ class HomePage extends Component
             'pdf' => $pdfData,
             'arabic' => $arabic
         ]);
-        
+
         $pdf->setPaper('A4', 'landscape');
         $fileName = 'gold_report_' . now()->format('m_Y') . '.pdf';
 
         return ($action == 'download') ? $pdf->download($fileName) : $pdf->stream($fileName);
     }
-    
+
 
    public function viewSinglePdf($id)
     {
@@ -187,7 +215,7 @@ class HomePage extends Component
             'Content-Type' => 'application/pdf',
         ]);
     }
-    
+
     #[On('sale-added')]
     public function refreshSales()
     {
