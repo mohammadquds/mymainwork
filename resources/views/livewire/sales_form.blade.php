@@ -116,6 +116,23 @@
                                     <option value="24">24K</option>
                                 </select>
                             </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-bold text-slate-700 mb-1">نوع الوحدة</label>
+                                <select wire:model="unit_type" style="font-size: 16px;"
+                                    class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
+                                    <option value="خاتم">خاتم</option>
+                                    <option value="حلق">حلق</option>
+                                    <option value="سلسال">سلسال</option>
+                                    <option value="اسواره">اسواره</option>
+                                    <option value="سبيكه">سبيكه</option>
+                                    <option value="أخرى">أخرى</option>
+                                </select>
+                            </div>
+                            <div class="md:col-span-3">
+                                <label class="block text-sm font-bold text-slate-700 mb-1">الوصف (اختياري)</label>
+                                <textarea wire:model="description" rows="3"
+                                    class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5 resize-none focus:border-amber-500 focus:ring-amber-500"></textarea>
+                            </div>
                         </div>
 
                         <div

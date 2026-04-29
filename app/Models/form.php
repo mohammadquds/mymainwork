@@ -19,6 +19,8 @@ class form extends Model
     'karat',
     'sale_price',
     'product_image',
+    'unit_type',
+    'description',
 ];
 
 protected $casts = [
