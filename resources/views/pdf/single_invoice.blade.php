@@ -39,6 +39,25 @@
             <th> {{ $arabic->utf8Glyphs('ريال') }}  {{ number_format($sale->sale_price, 2) }} </th>
             <td> {{ $arabic->utf8Glyphs('سعر الجرام') }}</td>
         </tr>
+        <tr>
+            <th style="text-align: center;">
+                @if($sale->product_image) 
+                    <img src="{{ public_path('storage/' . $sale->product_image) }}" 
+                        style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px;">
+                @else
+                    <span>{{ $arabic->utf8Glyphs('لا توجد صورة') }}</span>
+                @endif
+            </th>
+            <td>{{ $arabic->utf8Glyphs('صورة المنتج') }}</td>
+        </tr>
+        <tr>
+            <th> {{$arabic->utf8Glyphs($sale->unit_type ?? 'لا يوجد وحدة' )}} </th>
+            <td> {{ $arabic->utf8Glyphs('نوع الوحدة') }} </td>
+        </tr>
+        <tr>
+            <th> {{ $arabic->utf8Glyphs($sale->description ?? 'لا يوجد وصف' )}} </th>
+            <td> {{ $arabic->utf8Glyphs('الوصف') }} </td>
+        </tr>
     </table>
 
     <div class="total">
@@ -46,7 +65,7 @@
     </div>
 
     <p style="margin-top: 50px;"> <strong>  {{ $sale->employee_name }} </strong> {{ $arabic->utf8Glyphs('    الموظف:') }} </p>
-    {{-- <p><strong> {{ $sale->store_name }} </strong> {{ $arabic->utf8Glyphs('اسم المحل:') }} </p> --}}
+    <p><strong> {{ $sale->store_name }} </strong> {{ $arabic->utf8Glyphs('اسم المحل:') }} </p>
 
 </body>
 </html>

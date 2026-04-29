@@ -23,6 +23,8 @@ return new class extends Migration
             $table->integer('karat');
             $table->decimal('sale_price', 10, 2);
             $table->string('product_image')->nullable();
+            $table->string('unit_type')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }

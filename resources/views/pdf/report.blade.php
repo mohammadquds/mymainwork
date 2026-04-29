@@ -33,19 +33,32 @@
     <table>
         <thead>
             <tr>
+                <th style="width: 40%">{{ $arabic->utf8Glyphs('الوصف') }}</th>
+                <th style="width: 15%">{{ $arabic->utf8Glyphs(' نوع الوحدة') }}</th>
+                <th style="width: 20%">{{ $arabic->utf8Glyphs('صورة المنتج') }}</th>
                 <th style="width: 15%">{{ $arabic->utf8Glyphs('إجمالي المبلغ') }}</th>
                 <th style="width: 10%">{{ $arabic->utf8Glyphs('سعر الشراء') }}</th>
-                <th style="width: 10%">{{ $arabic->utf8Glyphs('الوزن') }}</th>
+                <th style="width: 7%">{{ $arabic->utf8Glyphs('الوزن') }}</th>
                 <th style="width: 7%">{{ $arabic->utf8Glyphs('عيار') }}</th>
                 <th style="width: 15%">{{ $arabic->utf8Glyphs('الهوية/الإقامة') }}</th>
                 <th style="width: 20%">{{ $arabic->utf8Glyphs('اسم العميل') }}</th>
-                <th style="width: 20%">{{ $arabic->utf8Glyphs('رقم الفاتورة ') }}</th>
+                <th style="width: 10%">{{ $arabic->utf8Glyphs('رقم الفاتورة ') }}</th>
                 <th style="width: 10%">{{ $arabic->utf8Glyphs('التاريخ') }}</th>
             </tr>
         </thead>
         <tbody>
             @foreach($pdf as $item)
             <tr>
+                <td>{{$arabic->utf8Glyphs($item->description ?? 'لا يوجد وصف') }}</td>
+                <td>{{$arabic->utf8Glyphs($item->unit_type ?? 'لا يوجد وحدة') }}</td>
+                <td>
+                    @if($item->product_image)
+                        <img src="{{ public_path('storage/' . $item->product_image) }}" 
+                             style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;">
+                    @else
+                        <span>{{ $arabic->utf8Glyphs('لا توجد صورة') }}</span>
+                    @endif
+                </td>
                 <td>{{ number_format($item->sale_price * $item->weight, 2) }} SR</td>
                 <td>{{ $item->sale_price }} </td>
                 <td>{{ $item->weight }} g</td>
@@ -60,5 +73,6 @@
     </table>
 
 <p style="margin-top: 50px;"> <strong>  {{ $item->employee_name }} </strong> {{ $arabic->utf8Glyphs('    الموظف:') }} </p>
+<p><strong> {{ $item->store_name }} </strong> {{ $arabic->utf8Glyphs('اسم المحل:') }} </p>
 </body>
 </html>

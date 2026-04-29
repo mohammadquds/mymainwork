@@ -24,6 +24,8 @@ class SalesForm extends Component
     public $karat = 21;
     public $sale_price;
     public $product_image;
+    public $unit_type;
+    public $description;
     public $showModal = false;
     public $marketPrice = 0;
 
@@ -122,6 +124,8 @@ class SalesForm extends Component
             'karat' => 'required|integer|in:18,21,22,24',
             'sale_price' => 'required|numeric|min:1',
             'product_image' => 'nullable|image|max:2048',
+            'unit_type' => 'nullable|string',
+            'description' => 'nullable|string',
         ];
     }
 
@@ -199,6 +203,8 @@ public function save()
             'karat' => $this->karat,
             'sale_price' => $this->sale_price,
             'product_image' => $imagePath,
+            'unit_type' => $this->unit_type,
+            'description' => $this->description,
         ]);
 
         $this->showModal = false;

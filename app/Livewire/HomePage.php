@@ -112,6 +112,13 @@ class HomePage extends Component
         $sale->full_name = $arabic->utf8Glyphs($sale->full_name);
         $sale->employee_name = $arabic->utf8Glyphs($sale->employee_name);
         $sale->store_name = $arabic->utf8Glyphs($sale->store_name);
+        $sale->product_image = ($sale->product_image);
+
+        $pdf = Pdf::loadView('pdf.report', [
+            'pdf' => collect([$sale]),
+            'arabic' => $arabic
+        ])
+            ->setOption(['isRemoteEnabled' => true, 'isHtml5ParserEnabled' => true]);
 
         $pdf = Pdf::loadView('pdf.single_invoice', [
             'sale' => $sale,
