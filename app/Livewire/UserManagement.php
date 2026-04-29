@@ -28,7 +28,11 @@ class UserManagement extends Component
     public ?User $selectedUserDetails = null;
     public $company_name;
     public $isCompanyLocked = false;
-
+    public $search = '';
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
 
     public function openDetails($id)
     {
@@ -264,6 +268,7 @@ class UserManagement extends Component
     {
         $this->authorize('user.view');
 
+        // 1. حساب مستوي القوة (Power Level) والصلاحيات المحظورة
         $myPowerLevel = Auth::user()->roles->max(function ($role) {
             return $role->permissions->count();
         }) ?? 0;
@@ -272,41 +277,56 @@ class UserManagement extends Component
             return $role->permissions->count() > $myPowerLevel;
         })->pluck('name');
 
+        // 2. بدأ الاستعلام الأساسي مع العلاقات
         $query = User::with(['roles', 'children.roles', 'manager']);
 
-        if (Auth::user()->hasRole('Super Admin')) {
+        // 3. تطبيق منطق البحث (مدمج)
+        if (!empty($this->search)) {
+            $query->where(function($q) {
+                $q->where('name', 'like', '%' . $this->search . '%')
+                ->orWhere('email', 'like', '%' . $this->search . '%')
+                ->orWhere('company_name', 'like', '%' . $this->search . '%');
+            });
+        }
 
+        // 4. تطبيق منطق الحماية والأدوار (الـ Authorization القديم الخاص بك)
+        if (Auth::user()->hasRole('Super Admin')) {
+            // السوبر أدمن لا يرى من مديرهم "Admin" (حسب منطقك)
             $query->whereDoesntHave('manager', function ($managerQuery) {
                 $managerQuery->whereHas('roles', function ($roleQuery) {
                     $roleQuery->where('name', 'Admin');
                 });
             });
-        } else {
 
+            // إذا لم يكن هناك بحث، نعرض المدراء فقط (اختياري حسب رغبتك)
+            if (empty($this->search)) {
+                $query->whereNull('admin_id');
+            }
+        } else {
+            // المستخدم العادي يرى نفسه فقط
             $query->where('id', Auth::id());
         }
 
+        // منع رؤية الأدوار المحظورة
         if ($forbiddenRoleNames->isNotEmpty()) {
             $query->whereDoesntHave('roles', function ($q) use ($forbiddenRoleNames) {
                 $q->whereIn('name', $forbiddenRoleNames);
             });
         }
 
+        // 5. التنفيذ النهائي (Pagination) والترتيب
         $users = $query->orderByRaw('id = ? DESC', [Auth::id()])
             ->orderBy('created_at', 'asc')
             ->paginate(10);
 
-
+        // 6. تجهيز الأدوار المتاحة للمودال
         $isSuperAdmin = Auth::user()->hasRole('Super Admin');
-
         $roles = Role::with('permissions')->get()->filter(function ($role) use ($myPowerLevel, $isSuperAdmin) {
-            if ($isSuperAdmin) {
-                return true;
-            }
+            if ($isSuperAdmin) return true;
             return $role->permissions->count() < $myPowerLevel;
         });
 
-        return view('livewire.user-management', compact(['users', 'roles']))
+        return view('livewire.user-management', compact('users', 'roles'))
             ->layout('layoutscreen.app');
     }
 }
