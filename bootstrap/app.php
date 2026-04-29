@@ -12,25 +12,28 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    // here we redirect visitors
-    ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(fn(Request $request) => route('register-account.page'));
 
-        // Redirect LOGGED IN users away from /login if they try to go there
+    ->withMiddleware(function (Middleware $middleware): void {
+
+        //  Combine all your web middleware into ONE array here the session and the check subscription
+        $middleware->web(append: [
+            \Illuminate\Session\Middleware\AuthenticateSession::class,
+            \App\Http\Middleware\CheckSubscription::class, //
+        ]);
+
+        //  Redirect logic if there not sign in the web will take them out side the page to register account and if there liged in will take to home page
+        $middleware->redirectGuestsTo(fn(Request $request) => route('register-account.page'));
         $middleware->redirectUsersTo(fn(Request $request) => route('home.page'));
 
+        //  Spatie Aliases
         $middleware->alias([
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
 
-
-        // This adds your check to every single "web" route
-        $middleware->web(append: [
-            CheckSubscription::class,
-        ]);
     })
+
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

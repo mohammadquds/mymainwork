@@ -30,6 +30,9 @@ class User extends Authenticatable
         'admin_id',
         'invite_code',
         'company_name',
+        'vat_number',
+        'mobile_number',
+        'official_company_number',
     ];
     function activity_logs()
     {
