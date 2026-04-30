@@ -359,6 +359,14 @@
                             <div class="font-black text-slate-900 text-sm">{{ number_format($selectedSale->sale_price, 2) }}
                                 <span class="text-[9px] text-slate-400">SAR</span></div>
                         </div>
+                        <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                            <span class="font-bold text-xs text-slate-500">نوع المنتج</span>
+                            <div class="font-black text-slate-900 text-sm">{{ $selectedSale->unit_type }}</div>
+                        </div>
+                        <div class="flex items-center justify-between py-2 border-b border-slate-100">
+                            <span class="font-bold text-xs text-slate-500">الوصف</span>
+                            <div class="font-black text-slate-900 text-sm">{{ $selectedSale->description }}</div>
+                        </div>
 
                         {{-- Image Viewer --}}
                         <div class="flex items-center justify-between py-2" x-data="{ showImageModal: false }">
