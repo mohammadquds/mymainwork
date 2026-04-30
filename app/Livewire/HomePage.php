@@ -32,6 +32,9 @@ class HomePage extends Component
     public $showOnboardingModal = false;
     public $vat_number;
     public $official_company_number;
+    public $isEditMode = false;
+    public $editingId;
+    public $edit_weight, $edit_karat, $edit_price, $edit_full_name, $edit_national_id, $edit_id_version_number, $edit_employee_name, $edit_store_name, $edit_type, $edit_product_image, $edit_created_at, $edit_updated_at;
 
 
 // here it will show the pop up of the vat number and others and after filling it it will disappear 
@@ -44,6 +47,57 @@ public function mount(){
 
         }
     }
+}
+    public $editingSale = [
+    'id' => null,
+    'full_name' => '',
+    'karat' => '',
+    'weight' => '',
+    'sale_price' => '',
+    'created_at' => '',
+    'updated_at' => '',
+    'product_image' => '',
+];
+
+public function editSale($id)
+{
+    // جلب بيانات المبيع المختار
+    $sale = form::findOrFail($id); // تأكد من اسم الموديل لديك (Sale أو Form)
+    
+    $this->editingSale = [
+        'id' => $sale->id,
+        'full_name' => $sale->full_name,
+        'karat' => $sale->karat,
+        'weight' => $sale->weight,
+        'sale_price' => $sale->sale_price,
+        'created_at' => $sale->created_at,
+        'updated_at' => $sale->updated_at,
+        'product_image' => $sale->product_image,
+    ];
+    
+    $this->isEditMode = true;
+}
+
+public function closeEditModal()
+{
+    $this->isEditMode = false;
+    $this->reset('editingSale');
+}
+
+public function updateSale()
+{
+    $sale = form::findOrFail($this->editingSale['id']);
+    
+    $sale->update([
+        'full_name' => $this->editingSale['full_name'],
+        'karat' => $this->editingSale['karat'],
+        'weight' => $this->editingSale['weight'],
+        'sale_price' => $this->editingSale['sale_price'],
+        'product_image' => $this->editingSale['product_image'],
+    ]);
+
+    $this->closeEditModal();
+    $this->dispatch('swal', title: 'تم التحديث بنجاح'); // اختيارية إذا كنت تستخدم SweetAlert
 }
 
 public function closeOnboardingModal()
