@@ -1,14 +1,43 @@
-{{-- resources/views/livewire/role-management.blade.php --}}
-<div class="w-full px-4 py-6  text-right border-collapse whitespace-nowrap" dir ="rtl">
-    <div class="p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl text-gray-700 font-bold">إدارة الصلاحيات</h2>
-            @can('role.create')
-                <button wire:click="create" class="bg-amber-700 hover:bg-amber-600 text-white px-4 py-2 rounded">
-                    إضافة صلاحية جديدة
-                </button>
-            @endcan
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8" dir="rtl">
+
+    {{-- HEADER & ACTIONS --}}
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8 flex flex-col gap-6">
+
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <svg class="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 inline-flex mx-1">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"></path>
+                    </svg>            
+                    إدارة الصلاحيات
+                </h1>
+                <p class="text-sm text-slate-500 font-medium mt-1">عدد الصلاحيات: <span
+                        class="text-amber-600 font-bold">{{ $roles->total() }}</span></p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row w-full md:w-auto gap-3">
+                @can('role.create')
+                    <button wire:click="create" class="bg-amber-500 text-slate-900 px-6 py-2.5 rounded-xl font-bold hover:bg-amber-400 transition-all shadow-lg shadow-amber-100 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"></path>
+                    </svg>
+                        إضافة صلاحية جديدة
+                    </button>
+                @endcan
+
+
+                {{-- <button wire:click="$dispatch('open-sales-form')"
+                    class="w-full sm:w-auto bg-slate-900 hover:bg-black text-amber-400 px-6 py-2.5 rounded-xl font-bold shadow-md transition-all flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    عملية جديدة
+                </button> --}}
+            </div>
         </div>
+    </div>
 
         @if (session()->has('message'))
             <div
