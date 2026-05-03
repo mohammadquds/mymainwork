@@ -10,6 +10,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 class HomePage extends Component
 {
     use WithPagination;
+    use WithFileUploads;
 
     public $selectedSale = null;
     public $showModal = false;
@@ -32,6 +34,10 @@ class HomePage extends Component
     public $showOnboardingModal = false;
     public $vat_number;
     public $official_company_number;
+    public $isEditMode = false;
+   public $newPhoto;
+    public $editingId;
+    public $edit_weight, $edit_karat, $edit_price, $edit_full_name, $edit_national_id, $edit_id_version_number, $edit_employee_name, $edit_store_name, $edit_type, $edit_product_image, $edit_created_at, $edit_updated_at;
 
 
 // here it will show the pop up of the vat number and others and after filling it it will disappear
@@ -45,6 +51,66 @@ public function mount(){
         }
     }
 }
+    public $editingSale = [
+        'id' => null,
+        'full_name' => '',
+        'national_id' => '',
+        'id_version_number' => '',
+        'karat' => '',
+        'weight' => '',
+        'sale_price' => '',
+        'unit_type' => '',
+        'store_name' => '',
+        'description' => '',
+        'product_image' => null,
+];
+
+    public function editSale($id)
+    {
+        $this->authorize('user.edit'); 
+        $sale = form::findOrFail($id);
+        
+        // جلب كل البيانات وتحويلها لمصفوفة لتعبئة الفورم تلقائياً
+        $this->editingSale = $sale->toArray();
+        $this->isEditMode = true;
+    }
+
+    public function updateSale()
+    {
+        // التحقق من كافة الحقول (بما فيها الهوية)
+        $this->validate([
+            'editingSale.full_name'   => 'required|string',
+            'editingSale.national_id' => 'required|numeric',
+            'editingSale.id_version_number' => 'nullable|numeric',
+            'editingSale.karat'       => 'required',
+            'editingSale.weight'      => 'required|numeric',
+            'editingSale.sale_price'  => 'required|numeric',
+            'editingSale.unit_type'   => 'required|string',
+            'editingSale.description' => 'nullable|string',
+        ]);
+
+        $sale = form::findOrFail($this->editingSale['id']);
+
+        if ($this->newPhoto) {
+            $imagePath = $this->newPhoto->store('products', 'public');
+            $this->editingSale['product_image'] = $imagePath;
+        }
+
+        // تحديث "كل شيء" في قاعدة البيانات
+        $sale->update($this->editingSale);
+
+        $this->isEditMode = false;
+        $this->reset(['editingSale', 'newPhoto']);
+        session()->flash('message', 'تم تحديث كافة البيانات بنجاح.');
+    }
+
+
+    public function closeEditModal()
+    {
+        $this->isEditMode = false;
+        $this->reset('editingSale');
+    }
+
 
 public function closeOnboardingModal()
     {
@@ -229,6 +295,14 @@ session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح!
     public function delete($id)
     {
         form::find($id)->delete();
+    }
+    public function edit($id)
+    {
+        $this->authorize('user.edit');
+
+        $sale = form::findOrFail($id);
+        $this->selectedSale = $sale;
+        $this->showModal = true;
     }
 
 

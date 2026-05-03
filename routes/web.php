@@ -36,7 +36,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-// Route::get('/activity-logs', ActivityLogsPage::class)->name('activity-logs.page');
+Route::get('/activity-logs', ActivityLogsPage::class)->name('activity-logs.page');
 Route::get('/homePage', HomePage::class)->name('home.page');
 Route::get('/sales-form', SalesForm::class)->name('sales-form.page');
 Route::get('/subscription', SubscriptionPage::class)->name('subscription.page');

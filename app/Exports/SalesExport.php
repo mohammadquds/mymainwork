@@ -88,8 +88,8 @@ class SalesExport implements FromQuery, WithHeadings, WithMapping, WithEvents, W
             $sale->sale_price,
             $sale->weight * $sale->sale_price, 
             '', // نترك مكان الصورة فارغاً لأن الـ Drawings ستوضع فوقه
-            $sale->unit_type ??$this->arabic->utf8Glyphs('لا يوجد وحدة') ,
-            $sale->description ??$this->arabic->utf8Glyphs('لا يوجد وصف') ,
+            $sale->unit_type ??$this->arabic->utf8Glyphs('-') ,
+            $sale->description ??$this->arabic->utf8Glyphs('-') ,
         ];
     }
 

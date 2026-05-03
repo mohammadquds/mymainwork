@@ -1,31 +1,54 @@
 <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8" dir="rtl">
 
     {{-- HEADER --}}
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div>
-            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
-                <div class="p-2 bg-amber-500/10 rounded-lg">
-                    <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8 flex flex-col gap-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <div class="p-2 bg-amber-500/10 rounded-lg">
+                        <svg class="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                        </svg>
+                    </div>
+                    إدارة المستخدمين
+                </h1>
+                <p class="text-sm text-slate-500 font-medium mt-1">إجمالي الحسابات المسجلة: <span class="text-amber-600 font-bold">{{ $users->total() }}</span></p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                @can('user.create')
+                    <button wire:click="create" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-black transition-all shadow-lg shadow-slate-200 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        إضافة مستخدم
+                    </button>
+                @endcan
+                <button wire:click="$set('showInviteModal', true)" class="bg-amber-500 text-slate-900 px-6 py-2.5 rounded-xl font-bold hover:bg-amber-400 transition-all shadow-lg shadow-amber-100 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    دعوة بريد
+                </button>
+            </div>
+        </div>    
+        {{-- SEARCH BAR --}}
+        <div class="relative w-full border-t border-slate-100 pt-6">
+            <div class="absolute inset-y-0 right-0 flex items-center pr-3 pt-6 pointer-events-none">
+                <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <input type="text" wire:model.live.debounce.300ms="search" placeholder="ابحث بالاسم،  اسم الشركة، البريد الإلكتروني..."
+                class="block w-full p-3 pr-10 text-sm text-slate-900 border border-slate-300 rounded-xl bg-slate-50 focus:ring-amber-500 focus:border-amber-500 transition-all">
+            @if(!empty($search))
+                <button wire:click="$set('search', '')" class="absolute inset-y-0 left-0 flex items-center pl-3 pt-6">
+                    <svg class="w-4 h-4 text-slate-400 hover:text-red-500 transition-colors" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
                     </svg>
-                </div>
-                إدارة المستخدمين
-            </h1>
-            <p class="text-sm text-slate-500 font-medium mt-1">إجمالي الحسابات المسجلة: <span class="text-amber-600 font-bold">{{ $users->total() }}</span></p>
+                </button>
+            @endif
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-            @can('user.create')
-                <button wire:click="create" class="bg-slate-900 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-black transition-all shadow-lg shadow-slate-200 flex items-center justify-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                    إضافة مستخدم
-                </button>
-            @endcan
-            <button wire:click="$set('showInviteModal', true)" class="bg-amber-500 text-slate-900 px-6 py-2.5 rounded-xl font-bold hover:bg-amber-400 transition-all shadow-lg shadow-amber-100 flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                دعوة بريد
-            </button>
-        </div>
     </div>
 
     {{-- Floating Notification --}}
@@ -79,7 +102,7 @@
                             <p class="text-sm font-bold text-slate-800">{{ $user->manager->name ?? 'System' }}</p>
                         </div>
                     </div>
-{{-- Subscription & Roles --}}
+                    {{-- Subscription & Roles --}}
                     <div class="flex items-center justify-around w-full md:w-2/4 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
                         {{-- تفعيل وإلغاء الاشتراك --}}
                         <div class="flex items-center gap-2" @click.stop="">
@@ -97,11 +120,36 @@
                                             class="bg-red-50 text-red-600 px-3 py-2 rounded-xl text-[10px] font-black hover:bg-red-600 hover:text-white transition-all">إلغاء التفعيل</button>
                                 @endcan
                             @else
-                                <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-3 py-1 rounded-full italic">اشتراكك الشخصي نشط</span>
+                                <span class="text-[13px] text-slate-400 font-bold bg-slate-100 uppercase tracking-wider rounded-2xl mb-1">اشتراكك الشخصي نشط</span>
                             @endif
                         </div>
                     </div>
-
+                    {{-- الحالة الاشتراكي --}}
+                    @php
+                        $isActive = $user->status == 'active' && $user->end_date && \Carbon\Carbon::parse($user->end_date)->isFuture();
+                    @endphp
+                    <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
+                        <div class="text-center">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">حالة الحساب</p>
+                            
+                            <div class="px-3 py-1 rounded-full text-[10px] font-black {{ $isActive ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200' }}">
+                                @if($isActive)
+                                    <span class="flex items-center gap-1">
+                                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                        نشط
+                                    </span>
+                                @else
+                                    منتهي / متوقف
+                                @endif
+                            </div>
+                            
+                            @if($user->end_date)
+                                <p class="text-[9px] text-slate-400 mt-1 font-mono">
+                                    {{ \Carbon\Carbon::parse($user->end_date)->format('Y-m-d') }}
+                                </p>
+                            @endif
+                        </div> 
+                    </div>
 
                     {{-- Actions & Toggle --}}
                     <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
@@ -188,7 +236,33 @@
                                         @endif
                                     </div>
                                 </div>
-
+                                {{-- حالة الاشتراك الموظف --}}
+                                @php
+                                    $isActiveChild = $child->status == 'active' && $child->end_date && \Carbon\Carbon::parse($child->end_date)->isFuture();
+                                @endphp
+                                <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
+                                    <div class="text-center">
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">حالة الحساب</p>
+                                        
+                                        <div class="px-3 py-1 rounded-full text-[10px] font-black {{ $isActiveChild ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200' }}">
+                                            @if($isActiveChild)
+                                                <span class="flex items-center gap-1">
+                                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                                                    نشط
+                                                </span>
+                                            @else
+                                                منتهي / متوقف
+                                            @endif
+                                        </div>
+                                        
+                                        @if($user->end_date)
+                                            <p class="text-[9px] text-slate-400 mt-1 font-mono">
+                                                {{ \Carbon\Carbon::parse($user->end_date)->format('Y-m-d') }}
+                                            </p>
+                                        @endif
+                                    </div> 
+                                </div>     
+                                          
                                 {{-- 4. Actions (Edit / Delete) --}}
                                 <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
                                     <div class="flex gap-2">
