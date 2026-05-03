@@ -21,7 +21,7 @@
                         <th class="py-4 px-6 text-sm font-bold text-slate-700">الإجراء</th>
                         <th class="py-4 px-6 text-sm font-bold text-slate-700">القسم / السجل</th>
 
-                        {{-- UPDATE 1: Added the Details Header --}}
+                        {{-- UPDATE  Added the Details Header --}}
                         <th class="py-4 px-6 text-sm font-bold text-slate-700">التفاصيل</th>
 
                         <th class="py-4 px-6 text-sm font-bold text-slate-700">التاريخ والوقت</th>
@@ -65,7 +65,7 @@
                                 </div>
                             </td>
 
-                            {{-- UPDATE 3: The brand new Details Column --}}
+                            {{-- UPDATE  The brand new Details Column --}}
                             <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
                                 @if($log->event === 'created')
                                     تمت إضافة {{ $this->getModelArabicName($log->subject_type) }} جديدة.
@@ -94,12 +94,12 @@
                             {{-- Time --}}
                             <td class="py-4 px-6 text-sm text-slate-500" dir="ltr">
                                 {{ $log->created_at->format('Y-m-d h:i A') }}
-                                
+
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            {{-- UPDATE 4: Changed colspan to 5 --}}
+                            {{-- UPDATE  Changed colspan to 5 --}}
                             <td colspan="5" class="py-8 text-center text-slate-500 font-medium">لا توجد نشاطات مسجلة حتى الآن.</td>
                         </tr>
                     @endforelse

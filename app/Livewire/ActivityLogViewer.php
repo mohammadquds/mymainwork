@@ -66,11 +66,11 @@ class ActivityLogViewer extends Component
                 $oldValue = $old[$field] ?? 'فارغ';
                 $newValue = $attributes[$field] ?? 'فارغ';
 
-                // 👇 Clean up the date format if the field is date_of_birth 👇
-                if ($field === 'date_of_birth' || $field === 'birthday') {
+                if ($field === 'date_of_birth' || $field === 'end_date') {
                     $oldValue = $oldValue !== 'فارغ' ? \Carbon\Carbon::parse($oldValue)->format('Y-m-d') : $oldValue;
                     $newValue = $newValue !== 'فارغ' ? \Carbon\Carbon::parse($newValue)->format('Y-m-d') : $newValue;
                 }
+
 
                 $changesArray[] = [
                     'label' => $fieldMap[$modelName][$field],
