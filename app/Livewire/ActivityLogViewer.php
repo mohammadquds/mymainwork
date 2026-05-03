@@ -58,12 +58,24 @@ class ActivityLogViewer extends Component
             ]
         ];
 
-        foreach ($changedFields as $field) {
+      foreach ($changedFields as $field) {
+            if ($field === 'updated_at') continue;
+
             if (isset($fieldMap[$modelName][$field])) {
+
+                $oldValue = $old[$field] ?? 'فارغ';
+                $newValue = $attributes[$field] ?? 'فارغ';
+
+                // 👇 Clean up the date format if the field is date_of_birth 👇
+                if ($field === 'date_of_birth' || $field === 'birthday') {
+                    $oldValue = $oldValue !== 'فارغ' ? \Carbon\Carbon::parse($oldValue)->format('Y-m-d') : $oldValue;
+                    $newValue = $newValue !== 'فارغ' ? \Carbon\Carbon::parse($newValue)->format('Y-m-d') : $newValue;
+                }
+
                 $changesArray[] = [
                     'label' => $fieldMap[$modelName][$field],
-                    'old' => $old[$field] ?? 'فارغ',
-                    'new' => $attributes[$field] ?? 'فارغ',
+                    'old' => $oldValue,
+                    'new' => $newValue,
                 ];
             }
         }

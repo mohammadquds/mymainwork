@@ -121,7 +121,7 @@ class SalesForm extends Component
     {
         return [
             'full_name' => 'required|string|min:10',
-            'national_id' => 'required|unique:forms|digits:10|numeric',
+            'national_id' => 'required|digits:10|numeric',
             'date_of_birth' => 'required|date|before:today',
             'id_version_number' => 'required|numeric',
             'store_name' => 'required|string',

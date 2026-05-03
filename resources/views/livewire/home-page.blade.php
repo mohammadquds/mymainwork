@@ -107,7 +107,7 @@
                     </div>
                     <div class="flex items-center gap-3">
                         {{-- زر التعديل  --}}
-                        <button wire:click.stop="editSale({{ $sale->id }})" 
+                        <button wire:click.stop="editSale({{ $sale->id }})"
                             class="text-slate-300 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 p-2 rounded-lg transition-colors border border-transparent hover:border-indigo-100">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -150,7 +150,7 @@
     @if($isEditMode)
         <div class="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all" dir="rtl">
             <div class="bg-white w-full max-w-md max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
-                
+
                 {{-- الهيدر --}}
                 <div class="bg-slate-900 p-5 flex justify-between items-center text-white shrink-0">
                     <h3 class="text-lg font-black">تعديل بيانات العملية الشامل</h3>
@@ -161,7 +161,7 @@
 
                 {{-- جسم الفورم (قابل للتمرير) --}}
                 <form wire:submit.prevent="updateSale" class="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/30 custom-scrollbar">
-                    
+
                     {{-- البيانات الأساسية --}}
                     <div class="space-y-4">
                         <div>
@@ -177,6 +177,12 @@
                             <div>
                                 <label class="block text-[11px] font-black text-slate-500 uppercase">نسخة الهوية</label>
                                 <input type="text" wire:model="editingSale.id_version_number" class="w-full bg-white border border-slate-200 rounded-2xl p-3 font-bold shadow-sm font-mono text-sm">
+                            </div>
+                               <div>
+                                <label class="block text-[11px] font-black text-slate-500 uppercase">تاريخ الميلاد</label>
+                                <input type="date" wire:model="editingSale.date_of_birth"
+                                    style="font-size: 16px;"
+                                    class="w-full border border-slate-300 focus:border-amber-500 focus:ring-amber-500 rounded-xl shadow-sm px-3 py-2.5">
                             </div>
                         </div>
                     </div>
@@ -234,13 +240,13 @@
                     </div>
                 </form>
                 <div class="text-sm text-slate-500 font-bold">
-                    تاريخ الإنشاء: 
+                    تاريخ الإنشاء:
                     <span class="text-slate-900 font-mono">
                         {{ \Carbon\Carbon::parse($editingSale['created_at'])->format('Y-m-d H:i') }}
                     </span>
                 </div>
                 <div class="text-sm text-slate-500 font-bold">
-                    تاريخ آخر تعديل: 
+                    تاريخ آخر تعديل:
                     <span class="text-slate-900 font-mono">
                         {{ \Carbon\Carbon::parse($editingSale['updated_at'])->format('Y-m-d H:i') }}
                     </span>

@@ -94,6 +94,7 @@
                             {{-- Time --}}
                             <td class="py-4 px-6 text-sm text-slate-500" dir="ltr">
                                 {{ $log->created_at->format('Y-m-d h:i A') }}
+                                
                             </td>
                         </tr>
                     @empty
