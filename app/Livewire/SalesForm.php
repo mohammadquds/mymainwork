@@ -10,9 +10,13 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 
+
+
+
 class SalesForm extends Component
 {
     use WithFileUploads;
+
 
     public $full_name;
     public $national_id;
@@ -28,6 +32,8 @@ class SalesForm extends Component
     public $description;
     public $showModal = false;
     public $marketPrice = 0;
+
+
 
 
     #[On('transfer-to-sales')]
@@ -115,7 +121,7 @@ class SalesForm extends Component
     {
         return [
             'full_name' => 'required|string|min:10',
-            'national_id' => 'required|digits:10|numeric',
+            'national_id' => 'required|unique:forms|digits:10|numeric',
             'date_of_birth' => 'required|date|before:today',
             'id_version_number' => 'required|numeric',
             'store_name' => 'required|string',
@@ -123,8 +129,8 @@ class SalesForm extends Component
             'weight' => 'required|numeric|min:0.01',
             'karat' => 'required|integer|in:18,21,22,24',
             'sale_price' => 'required|numeric|min:1',
-            'product_image' => 'nullable|image|max:2048',
-            'unit_type' => 'nullable|string',
+            'product_image' => 'required|image|max:2048',
+            'unit_type' => 'required|string',
             'description' => 'nullable|string',
         ];
     }
@@ -171,7 +177,7 @@ public function save()
             $imagePath = $this->product_image->store('products', 'public');
         }
 
-    
+
         $user = auth()->user();
         $topBossId = $user->admin_id ? $user->admin_id : $user->id;
         $topBoss = \App\Models\User::find($topBossId);

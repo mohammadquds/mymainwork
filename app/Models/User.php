@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\LogOptions;
 
 class User extends Authenticatable
 {
@@ -34,9 +36,24 @@ class User extends Authenticatable
         'mobile_number',
         'official_company_number',
     ];
+
+
+      use LogsActivity;
+
+
+    // this the activity log tracker will track every thing
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
+    }
+
     function activity_logs()
     {
-        return $this->hasMany(Activity_logs::class, 'user_id');
+        // return $this->hasMany(Activity_logs::class, 'user_id');
     }
     function subscriptions()
     {

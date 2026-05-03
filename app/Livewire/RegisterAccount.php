@@ -32,12 +32,14 @@ class RegisterAccount extends Component
     public $isLoginMode = false;
     public $admin_id = null;
 
+
+
     public function mount()
     {
         $this->admin_id = request()->query('ref');
 
         if ($this->admin_id) {
-            $this->isLoginMode = true;
+            $this->isLoginMode = false;
             $admin = User::where('invite_code', $this->admin_id)->first();
 
             if ($admin && $admin->company_name) {
@@ -47,17 +49,29 @@ class RegisterAccount extends Component
         }
     }
 
-    public function toggleMode()
+ public function toggleMode()
     {
         $this->resetValidation();
-        $this->reset([
+
+        //  Create a list of fields to clear
+        $fieldsToReset = [
             'name', 'sign_email', 'sign_password', 'sign_password_confirmation',
-            'company_name', 'log_email', 'log_password', 'mobile_number',
-            'enteredOtp'
-        ]);
-        $this->currentStep = 1; // always reset to step 1 so it will show 1 step
+            'log_email', 'log_password', 'mobile_number',
+             'enteredOtp'
+        ];
+
+        // Only clear the company name if it is NOT locked by an invite link
+        if (!$this->isCompanyLocked) {
+            $fieldsToReset[] = 'company_name';
+        }
+
+        // Reset the allowed fields
+        $this->reset($fieldsToReset);
+
+        $this->currentStep = 1;
         $this->isLoginMode = !$this->isLoginMode;
     }
+
 
 
     // 1 send the otp
@@ -77,7 +91,7 @@ class RegisterAccount extends Component
 
 
         // otp for email
-        Mail::raw("Your verification code is: {$otp}", function($msg) {
+        Mail::raw("رمز التحقق : {$otp}", function($msg) {
             $msg->to($this->sign_email)->subject('Verification Code');
         });
 

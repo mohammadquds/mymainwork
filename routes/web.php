@@ -12,9 +12,10 @@ use App\Livewire\RegisterAccount;
 use App\Livewire\UserManagement;
 use App\Livewire\RoleManagement;
 use App\Livewire\SalesForm;
+use App\Livewire\ActivityLogViewer;
 
 
-// ridirecting the pages to main page 
+// ridirecting the pages to main page
 Route::redirect('/login', '/');
 Route::redirect('/register', '/');
 Route::redirect('/dashboard', '/homePage');
@@ -40,6 +41,7 @@ Route::get('/homePage', HomePage::class)->name('home.page');
 Route::get('/sales-form', SalesForm::class)->name('sales-form.page');
 Route::get('/subscription', SubscriptionPage::class)->name('subscription.page');
 // Route::get('/registration', RegistrationPage::class)->name('registration.page');
+Route::get('/activity-log', ActivityLogViewer::class)->name('activity.log');
 Route::get('/profile', ProfileSettings::class)->name('profile.page');
 Route::get('/users', UserManagement::class)->middleware('permission:user.view')->name('user.page');
 Route::get('/roles', RoleManagement::class)->middleware('permission:role.view')->name('role.page');

@@ -3,7 +3,7 @@
         'name' => 'laravel/livewire-starter-kit',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '0f5c2e7f1eb6ec671f981a1e2ed5c08eb5ffe281',
+        'reference' => '6a3a6feecbfb5103267d0c3c3104cc18dc63e49c',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -562,7 +562,7 @@
         'laravel/livewire-starter-kit' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '0f5c2e7f1eb6ec671f981a1e2ed5c08eb5ffe281',
+            'reference' => '6a3a6feecbfb5103267d0c3c3104cc18dc63e49c',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1321,6 +1321,15 @@
             'install_path' => __DIR__ . '/../sebastian/version',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'spatie/laravel-activitylog' => array(
+            'pretty_version' => '4.12.3',
+            'version' => '4.12.3.0',
+            'reference' => '2a2024fcac05628b0d1bfdbb1b94dda8b0661dc0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../spatie/laravel-activitylog',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
         'spatie/laravel-package-tools' => array(
             'pretty_version' => '1.93.0',

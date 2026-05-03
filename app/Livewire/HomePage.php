@@ -34,7 +34,7 @@ class HomePage extends Component
     public $official_company_number;
 
 
-// here it will show the pop up of the vat number and others and after filling it it will disappear 
+// here it will show the pop up of the vat number and others and after filling it it will disappear
 public function mount(){
     $user=Auth::user();
 
@@ -53,8 +53,8 @@ public function closeOnboardingModal()
 
 public function saveCompanyDetails(){
     $this->validate([
-        'vat_number' => 'required|max:20',
-        'official_company_number' => 'required|max:20',
+        'vat_number' => 'required|unique:users|max:20',
+        'official_company_number' => 'required|unique:users|max:20',
     ]);
 $user= Auth::user();
 
