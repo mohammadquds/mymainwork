@@ -149,30 +149,45 @@
     {{-- زر التعديل --}}
     @if($isEditMode)
         <div class="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all" dir="rtl">
-            <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
-                <div class="bg-slate-900 p-5 flex justify-between items-center text-white">
-                    <div class="flex items-center gap-3">
-                        <div class="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        </div>
-                        <h3 class="text-lg font-black">تعديل بيانات العملية</h3>
-                    </div>
-                    <button wire:click="closeEditModal" class="text-slate-400 hover:text-white transition-colors">
+            <div class="bg-white w-full max-w-md max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+                
+                {{-- الهيدر --}}
+                <div class="bg-slate-900 p-5 flex justify-between items-center text-white shrink-0">
+                    <h3 class="text-lg font-black">تعديل بيانات العملية الشامل</h3>
+                    <button wire:click="closeEditModal" class="text-slate-400 hover:text-white">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
 
-                <form wire:submit.prevent="updateSale" class="p-6 space-y-5">
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1.5 uppercase">اسم العميل الكامل</label>
-                        <input type="text" wire:model="editingSale.full_name" class="w-full bg-slate-50 border-slate-200 rounded-xl p-3 text-sm font-bold focus:ring-amber-500 focus:border-amber-500 transition-all">
+                {{-- جسم الفورم (قابل للتمرير) --}}
+                <form wire:submit.prevent="updateSale" class="flex-1 overflow-y-auto p-6 space-y-5 bg-slate-50/30 custom-scrollbar">
+                    
+                    {{-- البيانات الأساسية --}}
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[11px] font-black text-slate-500 uppercase">اسم العميل الكامل</label>
+                            <input type="text" wire:model="editingSale.full_name" class="w-full bg-white border border-slate-200 rounded-2xl p-3 font-bold shadow-sm">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 uppercase">رقم الهوية</label>
+                                <input type="text" wire:model="editingSale.national_id" class="w-full bg-white border border-slate-200 rounded-2xl p-3 font-bold shadow-sm font-mono text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-black text-slate-500 uppercase">نسخة الهوية</label>
+                                <input type="text" wire:model="editingSale.id_version_number" class="w-full bg-white border border-slate-200 rounded-2xl p-3 font-bold shadow-sm font-mono text-sm">
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <hr class="border-slate-100">
+
+                    {{-- بيانات المنتج --}}
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1">العيار</label>
-                            <select wire:model.live="karat" style="font-size: 16px;"
-                                class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
+                            <label class="block text-[11px] font-black text-slate-500 uppercase">العيار</label>
+                            <select wire:model="editingSale.karat" class="w-full bg-white border border-slate-200 rounded-2xl p-3 font-bold shadow-sm">
                                 <option value="18">18K</option>
                                 <option value="21">21K</option>
                                 <option value="22">22K</option>
@@ -180,25 +195,19 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-bold text-slate-700 mb-1">الوزن (جرام)</label>
-                            <input type="text" inputmode="decimal" wire:model.live.debounce.500ms="weight"
-                            oninput="this.value = this.value.replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^0-9.]/g, '')"
-                            style="font-size: 16px;"
-                            class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
-                            @error('weight') <span
-                            class="text-xs text-red-600 font-bold block mt-1">{{ $message }}</span> @enderror
+                            <label class="block text-[11px] font-black text-slate-500 uppercase">الوزن (جرام)</label>
+                            <input type="number" step="0.01" wire:model="editingSale.weight" class="w-full bg-white border border-slate-200 rounded-2xl p-3 font-bold shadow-sm">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1.5 uppercase">سعر الجرام (SAR)</label>
-                        <input type="number" step="0.01" wire:model="editingSale.sale_price" class="w-full bg-slate-50 border-slate-200 rounded-xl p-3 text-sm font-bold focus:ring-amber-500 focus:border-amber-500 transition-all">
+                        <label class="block text-[11px] font-black text-slate-500 uppercase">سعر الجرام (SAR)</label>
+                        <input type="number" step="0.01" wire:model="editingSale.sale_price" class="w-full bg-white border border-slate-200 rounded-2xl p-3 font-bold shadow-sm">
                     </div>
 
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1.5 uppercase">نوع الوحدة</label>
-                        <select wire:model="unit_type" style="font-size: 16px;"
-                            class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
+                        <label class="block text-[11px] font-black text-slate-500 uppercase">نوع الوحدة</label>
+                        <select wire:model="editingSale.unit_type" class="w-full bg-white border border-slate-200 rounded-2xl p-3 font-bold shadow-sm">
                             <option value="خاتم">خاتم</option>
                             <option value="حلق">حلق</option>
                             <option value="سلسال">سلسال</option>
@@ -207,32 +216,40 @@
                             <option value="أخرى">أخرى</option>
                         </select>
                     </div>
+                    <div class="md:col-span-3">
+                        <label class="block text-sm font-bold text-slate-700 mb-1">الوصف (اختياري)</label>
+                        <textarea wire:model="editingSale.description" rows="3"
+                            class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5 resize-none focus:border-amber-500 focus:ring-amber-500"></textarea>
+                    </div>
 
-                    <div class="text-sm text-slate-500">تاريخ الإنشاء: {{ $editingSale['created_at'] }}</div>
-                    <div class="text-sm text-slate-500">تاريخ آخر تعديل: {{ $editingSale['updated_at'] }}</div>
-
-                    {{-- CAMERA & IMAGE UPLOAD SECTION --}}
-
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-1.5 uppercase">صورة المنتج</label>
-                        <input type="file" accept="image/*" wire:model="editingSale.product_image" class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5"> 
-                    </div>    
-                    @if($sale->product_image)
-                        <img src="{{ asset('storage/' . $sale->product_image) }}" 
-                            alt="صورة المنتج" 
-                            class="w-20 h-20 rounded-xl object-cover border border-slate-200">
-                    @else
-                        <!-- صورة افتراضية في حال عدم وجود صورة -->
-                        <div class="w-20 h-20 bg-slate-100 rounded-xl flex items-center justify-center text-slate-400 text-[10px]">
-                            لا توجد صورة
-                        </div>
-                    @endif   
-                    
-                    <div class="pt-4 flex gap-3">
-                        <button type="submit" class="flex-1 bg-slate-900 text-amber-400 py-3 rounded-xl font-black shadow-lg hover:bg-black transition-all">حفظ التعديلات</button>
-                        <button type="button" wire:click="closeEditModal" class="flex-1 bg-slate-100 text-slate-600 py-3 rounded-xl font-bold hover:bg-slate-200 transition-all">إلغاء</button>
+                    {{-- الصور --}}
+                    <div class="pt-2">
+                        <label class="block text-[11px] font-black text-slate-500 uppercase mb-2">تحديث الصورة المرفقة</label>
+                        <input type="file" wire:model="newPhoto" class="w-full text-xs text-slate-400 file:bg-indigo-50 file:rounded-xl file:border-0 file:px-4 file:py-2 file:font-bold">
+                        @if($editingSale['product_image'])
+                            <div class="mt-4 flex justify-center">
+                                <img src="{{ asset('storage/' . $editingSale['product_image']) }}" class="w-24 h-24 rounded-2xl object-cover border-2 border-slate-200 shadow-sm">
+                            </div>
+                        @endif
                     </div>
                 </form>
+                <div class="text-sm text-slate-500 font-bold">
+                    تاريخ الإنشاء: 
+                    <span class="text-slate-900 font-mono">
+                        {{ \Carbon\Carbon::parse($editingSale['created_at'])->format('Y-m-d H:i') }}
+                    </span>
+                </div>
+                <div class="text-sm text-slate-500 font-bold">
+                    تاريخ آخر تعديل: 
+                    <span class="text-slate-900 font-mono">
+                        {{ \Carbon\Carbon::parse($editingSale['updated_at'])->format('Y-m-d H:i') }}
+                    </span>
+                </div>
+                {{-- الفوتر الثابت --}}
+                <div class="p-6 bg-white border-t border-slate-100 flex gap-3 shrink-0">
+                    <button wire:click="updateSale" class="flex-1 bg-slate-900 text-amber-400 py-4 rounded-2xl font-black shadow-lg hover:bg-black transition-all">تحديث كافة البيانات</button>
+                    <button wire:click="closeEditModal" class="flex-1 bg-slate-100 text-slate-500 py-4 rounded-2xl font-bold hover:bg-slate-200 transition-all">إلغاء</button>
+                </div>
             </div>
         </div>
     @endif
