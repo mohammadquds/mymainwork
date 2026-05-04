@@ -41,7 +41,7 @@
         </tr>
         <tr>
             <th style="text-align: center;">
-                @if($sale->product_image) 
+                @if($sale->product_image_path && file_exists($sale->product_image_path)) 
                     <img src="{{ public_path('storage/' . $sale->product_image) }}" 
                         style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px;">
                 @else

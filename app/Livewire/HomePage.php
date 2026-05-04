@@ -103,6 +103,17 @@ public function mount(){
         $this->reset(['editingSale', 'newPhoto']);
         session()->flash('message', 'تم تحديث كافة البيانات بنجاح.');
     }
+    public function duplicateSale($id)
+    {
+        $this->authorize('user.edit'); 
+        $sale = form::findOrFail($id);
+        $newSale = $sale->replicate();
+        $newSale->created_at = now();
+        $newSale->updated_at = now();
+        $newSale->save();
+
+        session()->flash('message', 'تم تكرار السجل بنجاح.');
+    }
 
 
     public function closeEditModal()
@@ -207,6 +218,12 @@ session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح!
         $sale->employee_name = $arabic->utf8Glyphs($sale->employee_name);
         $sale->store_name = $arabic->utf8Glyphs($sale->store_name);
         $sale->product_image = ($sale->product_image);
+
+        if ($sale->product_image) {
+            $sale->product_image_path = public_path('storage/' . $sale->product_image);
+        } else {
+            $sale->product_image_path = null;
+        }
 
         $pdf = Pdf::loadView('pdf.report', [
             'pdf' => collect([$sale]),
@@ -349,46 +366,34 @@ session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح!
 
     public function render()
     {
-// Get the list of IDs this person is allowed to see
+        // 1. جلب المعرفات المسموح بها للمستخدم الحالي
         $allowedIds = $this->getAllowedUserIds();
-        $salesQuery = form::whereIn('user_id', $allowedIds);
 
-        if (!empty($this->search)) {
-            $salesQuery->where(function ($query) {
-                $query->where('full_name', 'like', '%' . $this->search . '%')
-                    ->orWhere('national_id', 'like', '%' . $this->search . '%')
-                    ->orWhere('id_version_number', 'like', '%' . $this->search . '%');
-            });
-        }
-
-
-
-        $sales = $groupedSales = $salesQuery->selectRaw('
-            MAX(id) as id,
-            national_id,
-            MAX(full_name) as full_name,
-            MAX(created_at) as created_at,
-            MAX(karat) as karat,
-            MAX(weight) as weight,
-            MAX(sale_price) as sale_price
-        ')
+        // 2. جلب قائمة العملاء الفريدين كـ Collection بسيطة
+        $clients = Form::whereIn('user_id', $allowedIds)
+            ->select('national_id', \DB::raw('MAX(full_name) as full_name'), \DB::raw('MAX(created_at) as last_transaction'))
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('full_name', 'like', '%' . $this->search . '%')
+                    ->orWhere('national_id', 'like', '%' . $this->search . '%');
+                });
+            })
             ->groupBy('national_id')
-            ->orderBy('created_at', 'asc')
-            ->paginate(10);
+            ->orderBy('last_transaction', 'desc')
+            ->get(); 
 
-
-
-        $customerOrders = collect();
-        if ($this->selectedSale) {
-
-            $allowedIds = $this->getAllowedUserIds();
-            $customerOrders = form::where('national_id', $this->selectedSale->national_id)
+        // 3. جلب العمليات لكل عميل وإضافتها له بشكل مباشر
+        foreach ($clients as $client) {
+            $client->orders = Form::where('national_id', $client->national_id)
                 ->whereIn('user_id', $allowedIds)
-                ->orderBy('created_at', 'asc')
-                ->paginate(2, ['*'], 'ordersPage');
+                ->orderBy('created_at', 'desc')
+                ->get(); // جلب كافة العمليات التابعة لهذا العميل
         }
 
-        return view('livewire.home-page', compact('sales', 'customerOrders'))
-            ->layout('layoutscreen.app');
+        return view('livewire.home-page', [
+            'clients' => $clients
+        ])->layout('layoutscreen.app');
     }
+
 }
+

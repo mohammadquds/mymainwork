@@ -118,8 +118,9 @@
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-bold text-slate-700 mb-1">نوع الوحدة</label>
-                                <select wire:model="unit_type" style="font-size: 16px;"
+                                <select wire:model.live="unit_type" style="font-size: 16px;"
                                     class="w-full border border-slate-300 rounded-xl shadow-sm px-3 py-2.5">
+                                    <option value="اختر نوع الوحدة">اختر نوع الوحدة</option>
                                     <option value="خاتم">خاتم</option>
                                     <option value="حلق">حلق</option>
                                     <option value="سلسال">سلسال</option>
@@ -257,13 +258,19 @@
                             class="flex-1 bg-slate-100 text-slate-700 py-3 rounded-xl text-sm font-bold border border-slate-200 shadow-sm transition-colors hover:bg-slate-200">
                             إلغاء
                         </button>
-                        <button type="submit" onclick="document.body.style.overflow='auto'"
-                            class="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl shadow-md flex justify-center items-center gap-2 transition-colors hover:bg-green-700">
-                            <svg style="width: 18px; height: 18px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                                </path>
+                        <!-- زر حفظ العملية المربوط بالدالة الجديدة -->
+                        <button type="button" 
+                                wire:click="storeSale" 
+                                wire:loading.attr="disabled"
+                                class="flex-1 bg-green-600 text-white font-bold py-3 rounded-xl shadow-md flex justify-center items-center gap-2 transition-colors hover:bg-green-700 disabled:opacity-50">
+                            
+                            <!-- أيقونة تحميل تظهر فقط عند الضغط (اختياري) -->
+                            <svg wire:loading wire:target="storeSale" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            حفظ العملية
+
+                            <span>حفظ العملية</span>
                         </button>
                     </div>
 

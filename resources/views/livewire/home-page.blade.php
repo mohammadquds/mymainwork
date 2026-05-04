@@ -13,8 +13,18 @@
                     </svg>
                     إدارة المبيعات
                 </h1>
-                <p class="text-sm text-slate-500 font-medium mt-1">إجمالي العمليات المسجلة: <span
-                        class="text-amber-600 font-bold">{{ $sales->total() }}</span></p>
+                <p class="text-sm text-slate-500 font-medium mt-1">
+                    عدد العملاء المسجلين: 
+                    <span class="text-amber-600 font-bold">{{ $clients->count() }}</span>
+                </p>
+                
+                @php 
+                    $totalSales = \App\Models\Form::count(); 
+                @endphp
+                <p class="text-sm text-slate-500 font-medium mt-1">
+                    إجمالي العمليات المسجلة: 
+                    <span class="text-amber-600 font-bold">{{ $totalSales }}</span>
+                </p>
             </div>
 
             <div class="flex flex-col sm:flex-row w-full md:w-auto gap-3">
@@ -63,88 +73,98 @@
 
 
     {{-- SALES LIST --}}
-    <div class="space-y-3">
-        @forelse($sales as $sale)
-            <div wire:click="openDetails({{ $sale->id }})" wire:key="sale-{{ $sale->id }}"
-                class="group bg-white border border-slate-200 p-4 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 cursor-pointer hover:border-amber-400 hover:shadow-md transition-all duration-200">
+    <div class="space-y-4" dir="rtl">
+        @foreach($clients as $client)
+            {{-- حاوية العميل --}}
+            <div wire:key="client-container-{{ $client->national_id }}" x-data="{ open: false }" class="bg-white border ...">                   
+                {{-- سطر العميل الرئيسي --}}
+                <div @click="open = !open" class="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center font-black text-slate-500">
+                            #{{ $loop->iteration }}
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-900 text-lg">{{ $client->full_name }}</h3>
+                            <p class="text-xs text-slate-400 font-mono">رقم الهوية: {{ $client->national_id }}</p>
+                        </div>
+                    </div>
 
-                <div class="flex items-center gap-4 w-full md:w-1/3">
-                    <div
-                        class="bg-slate-50 border border-slate-100 text-slate-500 w-12 h-12 rounded-xl flex items-center justify-center font-black shadow-sm group-hover:bg-amber-100 group-hover:text-amber-700 group-hover:border-amber-200 transition-colors">
-                        #{{ $loop->iteration }}
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
-                            {{ $sale->full_name }}</h3>
-                        <p class="text-xs text-slate-400 font-mono mt-0.5">{{ $sale->national_id }}</p>
-                    </div>
-                </div>
-
-                <div
-                    class="flex items-center justify-around w-full md:w-1/3 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
-                    <div class="text-center">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">العيار</p>
-                        <p class="text-sm font-bold text-slate-800">{{ $sale->karat }}<span
-                                class="text-xs text-amber-500 ml-0.5">K</span></p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">الوزن</p>
-                        <p class="text-sm font-bold text-slate-800">{{ $sale->weight }}<span
-                                class="text-xs text-amber-500 ml-0.5">g</span></p>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">التاريخ</p>
-                        <p class="text-sm font-bold text-slate-800">{{ $sale->created_at->format('Y-m-d') }}</p>
-                    </div>
-                </div>
-
-                <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
-                    <div class="text-right">
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">المبلغ الإجمالي</p>
-                        <p class="text-xl font-black text-slate-900">
-                            {{ number_format($sale->weight * $sale->sale_price, 2) }} <span
-                                class="text-xs text-slate-400">SAR</span></p>
-                    </div>
                     <div class="flex items-center gap-3">
-                        {{-- زر التعديل  --}}
-                        <button wire:click.stop="editSale({{ $sale->id }})"
-                            class="text-slate-300 hover:text-indigo-600 bg-slate-50 hover:bg-indigo-50 p-2 rounded-lg transition-colors border border-transparent hover:border-indigo-100">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                            </svg>
-                        </button>
-
-                        <button wire:click.stop="delete({{ $sale->id }})" wire:confirm="تأكيد حذف هذه العملية؟"
-                            class="text-slate-300 hover:text-red-500 bg-slate-50 hover:bg-red-50 p-2 rounded-lg transition-colors">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                </path>
-                            </svg>
-                        </button>
+                        {{-- عرض عدد العمليات لهذا العميل --}}
+                        @php 
+                            $orderCount = \App\Models\Form::where('national_id', $client->national_id)->count();
+                        @endphp
+                        <span class="bg-amber-100 text-amber-700 text-[10px] px-3 py-1 rounded-full font-black">
+                            {{ $orderCount }} عمليات
+                        </span>
+                        <svg class="w-5 h-5 text-slate-400 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </div>
                 </div>
-            </div>
-        @empty
-            <div
-                class="bg-white py-16 text-center rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center">
-                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                    <svg class="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
-                        </path>
-                    </svg>
+
+                {{-- قائمة العمليات التفصيلية (تظهر عند الضغط) --}}
+                <div x-show="open" x-collapse class="bg-slate-50/50 border-t border-slate-100 p-4 space-y-3">
+                    @php
+                        $clients = \App\Models\Form::where('national_id', $client->national_id)->latest()->get();
+                    @endphp
+
+                    @foreach($clients as $sale)
+                        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 hover:border-amber-300 transition-all shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="w-1 h-10 bg-amber-400 rounded-full"></div>
+                                <div>
+                                    <p class="text-sm font-black text-slate-800">بيع عيار {{ $sale->karat }}K</p>
+                                    <p class="text-[10px] text-slate-400">تاريخ: {{ $sale->created_at->format('Y-m-d H:i') }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-6">
+                                <div class="text-center">
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase">الوزن</p>
+                                    <p class="text-sm font-black text-slate-900">{{ $sale->weight }}g</p>
+                                </div>
+
+                                {{-- أزرار التحكم الفردية لكل عملية --}}
+                                {{-- زر التعديل--}}
+                                <div class="flex items-center gap-2 pr-4 border-r border-slate-100">
+                                    @can('user.edit')
+                                        <button wire:click.stop="editSale({{ $sale->id }})" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-xl transition-colors" title="تعديل هذه العملية">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round"stroke-width="2" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+                                            </svg>
+                                        </button>
+                                    @endcan
+                                    {{-- زر الحذف--}}
+                                    <button wire:click.stop="delete({{ $sale->id }})" wire:confirm="هل تريد حذف هذه العملية المحددة فقط؟" class="p-2 text-red-500 hover:bg-red-50 rounded-xl transition-colors" title="حذف هذه العملية فقط">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                    {{-- زر طباعة الفاتورة PDF --}}
+                                    <a href="{{ route('invoice.pdf', $sale->id) }}" target="_blank" class="p-2 text-emerald-500 hover:bg-emerald-50 rounded-xl transition-colors" title="طباعة فاتورة هذه العملية pdf">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                        </svg>
+                                    </a>
+                                    {{-- زر التكرار--}}
+                                    <button wire:click="duplicateSale({{ $sale->id }})"wire:confirm="هل تريد تكرار هذه العملية المحددة فقط؟" class="p-2 text-blue-500 hover:bg-blue-50 rounded-xl transition-colors" title="تكرار العملية">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                      {{-- <div class="pt-2">
+                        {{ $clients->links() }}
+                    </div>   --}}
                 </div>
-                <p class="text-slate-500 font-bold text-lg">لا توجد مبيعات مسجلة</p>
-                <p class="text-slate-400 text-sm mt-1">قم بإضافة عملية شراء جديدة للبدء</p>
             </div>
-        @endforelse
+        @endforeach
+        {{-- <div class="pt-2">
+            {{ $clients->links() }}
+        </div>     --}}
     </div>
-
-    <div class="mt-8" dir="ltr">
-        {{ $sales->links() }}
-    </div>
-
 
     {{-- زر التعديل --}}
     @if($isEditMode)

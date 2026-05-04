@@ -35,6 +35,52 @@ class SalesForm extends Component
 
 
 
+   
+    public function storeSale()
+    {
+        // 1. التحقق من البيانات (نستخدم قواعد التحقق المعرفة في دالة rules)
+        $this->validate($this->rules());
+
+        // 2. معالجة صورة المنتج (إذا وجدت)
+        $imagePath = null;
+        if ($this->product_image) {
+            $imagePath = $this->product_image->store('products', 'public');
+        }
+
+        // 3. توليد رقم فاتورة جديد للشركة (المنطق الذي كتبته سابقاً)
+        $allowedIds = $this->getAllowedUserIds();
+        $highestInvoice = form::whereIn('user_id', $allowedIds)->max('invoice_number');
+        $newInvoiceNumber = $highestInvoice ? $highestInvoice + 1 : 1;
+
+        // 4. الحفظ في قاعدة البيانات مع إدراج الحقل 'id_version_number'
+        form::create([
+            'user_id'           => auth()->id(),
+            'invoice_number'    => $newInvoiceNumber,
+            'full_name'         => $this->full_name,
+            'national_id'       => $this->national_id,
+            'date_of_birth'     => $this->date_of_birth,
+            'id_version_number' => $this->id_version_number, // الحقل الذي سبب المشكلة
+            'store_name'        => $this->store_name,
+            'employee_name'     => $this->employee_name,
+            'weight'            => $this->weight,
+            'karat'             => $this->karat,
+            'sale_price'        => $this->sale_price,
+            'product_image'     => $imagePath,
+            'unit_type'         => $this->unit_type,
+            'description'       => $this->description,
+        ]);
+
+        // 5. تصفير الحقول وإغلاق المودال
+        $this->reset(['full_name', 'national_id', 'date_of_birth', 'id_version_number', 'weight', 'product_image', 'unit_type', 'description']);
+        $this->showModal = false;
+
+        // 6. إرسال إشارات التحديث
+        $this->dispatch('sale-added');
+        $this->dispatch('sale-stored'); 
+        
+        session()->flash('message', 'تم تسجيل العملية بنجاح!');
+    }
+
 
     #[On('transfer-to-sales')]
     public function loadFromCalculator($weight, $karat, $price)
@@ -258,7 +304,7 @@ public function save()
 
     public function render()
     {
-        return view('livewire.sales_form');
-        // ->layout('layoutscreen.app');
+        return view('livewire.sales_form')
+         ->layout('layoutscreen.app');
     }
 }
