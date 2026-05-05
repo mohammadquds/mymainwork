@@ -104,20 +104,20 @@
 
                         @if($ordersLast7Days > 3  && $customerAge < 18)
                             <span class="bg-red-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
-                                تحذير: قاصر + عمليات مكثفة(اسبوعي)
+                                تحذير: قاصر + عمليات مكثفة (اسبوعي)
                             </span>
 
                         @elseif($ordersLast30Days > 3 && $customerAge < 18)
-                            <span class="bg-orange-100 text-orange-700 text-[10px] px-3 py-1 rounded-full font-black shadow-sm border border-orange-200">
-                                تحذير: قاصر + عمليات مكثفة(شهري)
+                            <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-orange-700">
+                                تحذير: قاصر + عمليات مكثفة (شهري)
                             </span>
-                        @elseif($ordersLast7Days > 3)
-                            <span class="bg-red-100 text-red-700 text-[10px] px-3 py-1 rounded-full font-black shadow-sm border border-red-200">
-                                تحذير: عمليات مكثفة(اسبوعي)
+                        @elseif($ordersLast7Days >= 3)
+                            <span class="bg-red-100 text-red-700 text-[10px] px-3 py-1 rounded-full font-black border border-red-200">
+                                تنبيه: عمليات مكثفة (اسبوعي)
                             </span>
-                        @elseif($ordersLast30Days > 3)
+                        @elseif($ordersLast30Days >= 3)
                             <span class="bg-orange-100 text-orange-700 text-[10px] px-3 py-1 rounded-full font-black shadow-sm border border-orange-200">
-                                تحذير: عمليات مكثفة(شهري)
+                                تنبيه: عمليات مكثفة (شهري)
                             </span>
                         @endif    
                     </div>    
