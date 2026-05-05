@@ -88,7 +88,39 @@
                             <p class="text-xs text-slate-400 font-mono">رقم الهوية: {{ $client->national_id }}</p>
                         </div>
                     </div>
+                    {{-- عرض تحذيرات العميل  اسبوعي و شهري بنائا علي العمر--}}
+                    <div class="flex items-center gap-3">
+                        @php
+                            $customerAge = \Carbon\Carbon::parse($client->date_of_birth)->age;
 
+                            $ordersLast7Days = \App\Models\Form::where('national_id', $client->national_id)
+                                ->where('created_at', '>=', now()->subDays(7))
+                                ->count();
+
+                            $ordersLast30Days = \App\Models\Form::where('national_id', $client->national_id)
+                                ->where('created_at', '>=', now()->subDays(30))
+                                ->count();
+                        @endphp
+
+                        @if($ordersLast7Days > 3  && $customerAge < 18)
+                            <span class="bg-red-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
+                                تحذير: قاصر + عمليات مكثفة(اسبوعي)
+                            </span>
+
+                        @elseif($ordersLast30Days > 3 && $customerAge < 18)
+                            <span class="bg-orange-100 text-orange-700 text-[10px] px-3 py-1 rounded-full font-black shadow-sm border border-orange-200">
+                                تحذير: قاصر + عمليات مكثفة(شهري)
+                            </span>
+                        @elseif($ordersLast7Days > 3)
+                            <span class="bg-red-100 text-red-700 text-[10px] px-3 py-1 rounded-full font-black shadow-sm border border-red-200">
+                                تحذير: عمليات مكثفة(اسبوعي)
+                            </span>
+                        @elseif($ordersLast30Days > 3)
+                            <span class="bg-orange-100 text-orange-700 text-[10px] px-3 py-1 rounded-full font-black shadow-sm border border-orange-200">
+                                تحذير: عمليات مكثفة(شهري)
+                            </span>
+                        @endif    
+                    </div>    
                     <div class="flex items-center gap-3">
                         {{-- عرض عدد العمليات لهذا العميل --}}
                         @php
