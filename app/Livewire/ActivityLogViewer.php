@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\form;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Spatie\Activitylog\Models\Activity;
@@ -11,7 +12,11 @@ use App\Models\User;
 class ActivityLogViewer extends Component
 {
     use WithPagination;
-
+    public $search = '';
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
     public function getModelArabicName($modelClass)
     {
         $modelName = class_basename($modelClass);
@@ -107,6 +112,16 @@ class ActivityLogViewer extends Component
             $query->where('causer_id', $currentUser->id);
 
         }
+            if (!empty($this->search)) {
+                $query->where(function($q) {
+                    $q->whereHas('causer', function($q2) {
+                        $q2->where('name', 'like', '%' . $this->search . '%')
+                           ->orWhere('email', 'like', '%' . $this->search . '%');
+                    })->orWhere('description', 'like', '%' . $this->search . '%');
+
+                });
+            }
+            
 
         $logs = $query->paginate(15);
 
