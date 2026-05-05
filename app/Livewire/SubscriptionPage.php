@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Livewire;
-use App\Models\Subscriptions;
 use Livewire\Component;
 use App\Models\User;
 use Livewire\WithPagination;
@@ -32,12 +31,10 @@ class SubscriptionPage extends Component
 
     public function render()
 {
-    // 1. بدأ الاستعلام من موديل المستخدم (User) لجلب أصحاب الاشتراكات
-    // نستخدم eager loading للعلاقات إذا كانت موجودة لتقليل الضغط على القاعدة
-    $query = \App\Models\User::query();
+        $this->authorize('subscription.unactive.view');
 
-    // 2. تطبيق منطق البحث (المحاكي للكود الناجح)
-    // إذا قام المستخدم بالكتابة في السيرش بار، يتم البحث في الاسم، الشركة، والبريد
+ $query = User::with('children');
+
     if (!empty($this->search)) {
         $query->where(function($q) {
             $q->where('name', 'like', '%' . $this->search . '%')
@@ -45,18 +42,22 @@ class SubscriptionPage extends Component
               ->orWhere('company_name', 'like', '%' . $this->search . '%');
         });
     } else {
-        // 3. إذا لم يكن هناك بحث، نعرض فقط المدراء (الذين ليس لديهم admin_id)
-        // هذا يحافظ على شكل الصفحة مرتباً كما في الكود الذي أرسلته
         $query->whereNull('admin_id');
     }
 
-    // 4. التنفيذ النهائي مع الترتيب والتقسيم (Pagination)
-    // نجعل النتائج الأحدث تظهر أولاً
-    $subscriptions = $query->orderBy('id', 'desc')
+       if (!auth()->user()->hasRole('Super Admin')) {
+        $query->where(function($q) {
+            $q->where('id', auth()->id())
+              ->orWhere('admin_id', auth()->id());
+        });
+    }
+
+    $subscriptions = $query->orderBy('id', 'asc')
                            ->paginate(10);
 
-    
         return view('livewire.subscription-page', ['subscriptions' => $subscriptions])
             ->layout('layoutscreen.app');
     }
 }
+
+

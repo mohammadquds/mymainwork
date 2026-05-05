@@ -27,7 +27,7 @@
                     دعوة بريد
                 </button>
             </div>
-        </div>    
+        </div>
         {{-- SEARCH BAR --}}
         <div class="relative w-full border-t border-slate-100 pt-6">
             <div class="absolute inset-y-0 right-0 flex items-center pr-3 pt-6 pointer-events-none">
@@ -131,7 +131,7 @@
                     <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
                         <div class="text-center">
                             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">حالة الحساب</p>
-                            
+
                             <div class="px-3 py-1 rounded-full text-[10px] font-black {{ $isActive ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200' }}">
                                 @if($isActive)
                                     <span class="flex items-center gap-1">
@@ -142,14 +142,37 @@
                                     منتهي / متوقف
                                 @endif
                             </div>
-                            
-                            @if($user->end_date)
-                                <p class="text-[9px] text-slate-400 mt-1 font-mono">
-                                    {{ \Carbon\Carbon::parse($user->end_date)->format('Y-m-d') }}
-                                </p>
-                            @endif
-                        </div> 
+                        </div>
                     </div>
+
+
+            <div class="flex flex-row gap-2">
+    {{-- START DATE BOX --}}
+    <div class="bg-gray-50 p-2 rounded-lg border border-gray-100 flex flex-col items-center justify-center min-w-[65px]">
+        <span class="text-[10px] text-gray-400 font-bold mb-1.5 text-center leading-tight">
+            تاريخ<br>البدء
+        </span>
+        <div class="flex flex-col items-center font-mono font-bold leading-none gap-0.5">
+            <span class="text-xs text-gray-800">{{ \Carbon\Carbon::parse($user->start_date)->format('d') }}</span>
+            <span class="text-xs text-gray-800">{{ \Carbon\Carbon::parse($user->start_date)->format('M') }}</span>
+            <span class="text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($user->start_date)->format('Y') }}</span>
+        </div>
+    </div>
+
+    {{-- END DATE BOX --}}
+    <div class="bg-gray-50 p-2 rounded-lg border border-gray-100 flex flex-col items-center justify-center min-w-[65px]">
+        <span class="text-[10px] text-gray-400 font-bold mb-1.5 text-center leading-tight">
+            تاريخ<br>الانتهاء
+        </span>
+        <div class="flex flex-col items-center font-mono font-bold leading-none gap-0.5">
+            <span class="text-xs text-gray-800">{{ \Carbon\Carbon::parse($user->end_date)->format('d') }}</span>
+            <span class="text-xs text-gray-800">{{ \Carbon\Carbon::parse($user->end_date)->format('M') }}</span>
+            <span class="text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($user->end_date)->format('Y') }}</span>
+        </div>
+    </div>
+
+</div>
+
 
                     {{-- Actions & Toggle --}}
                     <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
@@ -197,7 +220,7 @@
                                     </div>
                                 </div>
 
-                                
+
                                 {{-- 2. Roles & Manager --}}
                                 <div class="flex items-center justify-around w-full md:w-1/3 md:border-r md:border-l border-slate-100 px-4 py-2 md:py-0 bg-slate-50 md:bg-transparent rounded-xl md:rounded-none">
                                     <div class="text-center">
@@ -243,7 +266,7 @@
                                 <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
                                     <div class="text-center">
                                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">حالة الحساب</p>
-                                        
+
                                         <div class="px-3 py-1 rounded-full text-[10px] font-black {{ $isActiveChild ? 'bg-green-100 text-green-700 border border-green-200' : 'bg-red-100 text-red-700 border border-red-200' }}">
                                             @if($isActiveChild)
                                                 <span class="flex items-center gap-1">
@@ -254,15 +277,37 @@
                                                 منتهي / متوقف
                                             @endif
                                         </div>
-                                        
-                                        @if($user->end_date)
-                                            <p class="text-[9px] text-slate-400 mt-1 font-mono">
-                                                {{ \Carbon\Carbon::parse($user->end_date)->format('Y-m-d') }}
-                                            </p>
-                                        @endif
-                                    </div> 
-                                </div>     
-                                          
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-row gap-2"> {{-- Wrapper to hold boxes horizontally --}}
+
+                                {{-- START DATE BOX --}}
+                                <div class="bg-gray-50 p-2 rounded-lg border border-gray-100 flex flex-col items-center justify-center min-w-[65px]">
+                                    <span class="text-[10px] text-gray-400 font-bold mb-1.5 text-center leading-tight">
+                                        تاريخ<br>البدء
+                                    </span>
+                                    <div class="flex flex-col items-center font-mono font-bold leading-none gap-0.5">
+                                        <span class="text-xs text-gray-800">{{ \Carbon\Carbon::parse($child->start_date)->format('d') }}</span>
+                                        <span class="text-xs text-gray-800">{{ \Carbon\Carbon::parse($child->start_date)->format('M') }}</span>
+                                        <span class="text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($child->start_date)->format('Y') }}</span>
+                                    </div>
+                                </div>
+
+                                {{-- END DATE BOX --}}
+                                <div class="bg-gray-50 p-2 rounded-lg border border-gray-100 flex flex-col items-center justify-center min-w-[65px]">
+                                    <span class="text-[10px] text-gray-400 font-bold mb-1.5 text-center leading-tight">
+                                        تاريخ<br>الانتهاء
+                                    </span>
+                                    <div class="flex flex-col items-center font-mono font-bold leading-none gap-0.5">
+                                        <span class="text-xs text-gray-800">{{ \Carbon\Carbon::parse($child->end_date)->format('d') }}</span>
+                                        <span class="text-xs text-gray-800">{{ \Carbon\Carbon::parse($child->end_date)->format('M') }}</span>
+                                        <span class="text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($child->end_date)->format('Y') }}</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
                                 {{-- 4. Actions (Edit / Delete) --}}
                                 <div class="flex items-center justify-between md:justify-end gap-6 w-full md:w-1/3">
                                     <div class="flex gap-2">

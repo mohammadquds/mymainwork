@@ -29,7 +29,7 @@ class RegisterAccount extends Component
     public $remember = false;
 
     // change between log in and sign in
-    public $isLoginMode = false;
+    public $isLoginMode = true;
     public $admin_id = null;
 
 
