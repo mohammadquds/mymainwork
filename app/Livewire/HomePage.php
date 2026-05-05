@@ -67,9 +67,9 @@ public function mount(){
 
     public function editSale($id)
     {
-        $this->authorize('user.edit'); 
+        $this->authorize('user.edit');
         $sale = form::findOrFail($id);
-        
+
         // جلب كل البيانات وتحويلها لمصفوفة لتعبئة الفورم تلقائياً
         $this->editingSale = $sale->toArray();
         $this->isEditMode = true;
@@ -105,7 +105,7 @@ public function mount(){
     }
     public function duplicateSale($id)
     {
-        $this->authorize('user.edit'); 
+        $this->authorize('user.edit');
         $sale = form::findOrFail($id);
         $newSale = $sale->replicate();
         $newSale->created_at = now();
@@ -370,7 +370,7 @@ session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح!
         $allowedIds = $this->getAllowedUserIds();
 
         // 2. جلب قائمة العملاء الفريدين كـ Collection بسيطة
-        $clients = Form::whereIn('user_id', $allowedIds)
+        $clients = form::whereIn('user_id', $allowedIds)
             ->select('national_id', \DB::raw('MAX(full_name) as full_name'), \DB::raw('MAX(created_at) as last_transaction'))
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
@@ -380,18 +380,28 @@ session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح!
             })
             ->groupBy('national_id')
             ->orderBy('last_transaction', 'desc')
-            ->get(); 
+            ->get();
 
         // 3. جلب العمليات لكل عميل وإضافتها له بشكل مباشر
         foreach ($clients as $client) {
-            $client->orders = Form::where('national_id', $client->national_id)
+            $client->orders = form::where('national_id', $client->national_id)
                 ->whereIn('user_id', $allowedIds)
                 ->orderBy('created_at', 'desc')
                 ->get(); // جلب كافة العمليات التابعة لهذا العميل
         }
 
+        // 👇 THE FIX: Calculate customerOrders if a modal is open 👇
+        $customerOrders = null;
+        if ($this->selectedSale) {
+            $customerOrders = form::where('national_id', $this->selectedSale->national_id)
+                ->whereIn('user_id', $allowedIds)
+                ->orderBy('created_at', 'desc')
+                ->paginate(5, ['*'], 'ordersPage'); // We paginate it by 5 so the modal doesn't get too long!
+        }
+
         return view('livewire.home-page', [
-            'clients' => $clients
+            'clients' => $clients,
+            'customerOrders' => $customerOrders // 👇 AND PASS IT TO THE BLADE HERE 👇
         ])->layout('layoutscreen.app');
     }
 
