@@ -390,18 +390,8 @@ session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح!
                 ->get(); // جلب كافة العمليات التابعة لهذا العميل
         }
 
-        // 👇 THE FIX: Calculate customerOrders if a modal is open 👇
-        $customerOrders = null;
-        if ($this->selectedSale) {
-            $customerOrders = form::where('national_id', $this->selectedSale->national_id)
-                ->whereIn('user_id', $allowedIds)
-                ->orderBy('created_at', 'desc')
-                ->paginate(5, ['*'], 'ordersPage'); // We paginate it by 5 so the modal doesn't get too long!
-        }
-
         return view('livewire.home-page', [
-            'clients' => $clients,
-            'customerOrders' => $customerOrders // 👇 AND PASS IT TO THE BLADE HERE 👇
+            'clients' => $clients
         ])->layout('layoutscreen.app');
     }
 
