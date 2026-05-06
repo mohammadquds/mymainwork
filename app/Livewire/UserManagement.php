@@ -27,6 +27,7 @@ class UserManagement extends Component
     public $showDetailsModal = false;
     public ?User $selectedUserDetails = null;
     public $company_name;
+    public $mobile_number;
     public $vat_number;
     public $official_company_number;
     public $isCompanyLocked = false;
@@ -51,6 +52,7 @@ class UserManagement extends Component
     protected $rules = [
         'name' => 'required|string|max:255',
         'email' => 'required|email|unique:users,email',
+        'mobile_number' => 'required | max:255',
         'company_name' => 'required | max:255',
         'password' => 'required|min:8',
         'selectedRoles' => 'array',
@@ -73,6 +75,7 @@ class UserManagement extends Component
         $this->userId = $user->id;
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->mobile_number = $user->mobile_number;
         $this->company_name = $user->company_name;
         $this->selectedRoles = $user->roles->pluck('name')->toArray();
         $this->isEditing = true;
@@ -87,6 +90,7 @@ class UserManagement extends Component
             $this->authorize('user.edit');
             $this->rules['email'] = 'required|email|unique:users,email,' . $this->userId;
             $this->rules['password'] = 'nullable|min:8';
+            $this->rules['mobile_number'] = 'required|max:10';
             $this->rules['company_name'] = 'nullable';
         } else {
             $this->authorize('user.create');
@@ -112,6 +116,7 @@ class UserManagement extends Component
         $userData = [
             'name' => $this->name,
             'email' => $this->email,
+            'mobile_number' => $this->mobile_number,
             'company_name' => auth()->user()->company_name,
             'vat_number' => auth()->user()->vat_number,
             'official_company_number' => auth()->user()->official_company_number,
@@ -184,6 +189,7 @@ class UserManagement extends Component
         $this->userId = null;
         $this->name = '';
         $this->email = '';
+        $this->mobile_number = '';
         $this->company_name = '';
         $this->password = '';
         $this->selectedRoles = ['user'];

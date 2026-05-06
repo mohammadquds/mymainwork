@@ -379,6 +379,12 @@
                             <input type="email" wire:model="email" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm bg-slate-50 font-mono">
                             @error('email') <span class="text-red-500 text-[10px]">{{ $message }}</span> @enderror
                         </div>
+
+                         <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">رقم الجوال </label>
+                            <input type="text" wire:model="mobile_number" class="w-full border border-slate-300 rounded-xl px-4 py-2 text-sm bg-slate-50 font-mono">
+                            @error('mobile_number') <span class="text-red-500 text-[10px]">{{ $message }}</span> @enderror
+                        </div>
                     </div>
 
                     <div>
