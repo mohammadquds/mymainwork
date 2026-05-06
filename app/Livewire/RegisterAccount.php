@@ -77,7 +77,7 @@ class RegisterAccount extends Component
 
 
 
-    // 1 send the otp
+    // step 1 send the otp
     public function sendOtp()
     {
         //check the email first
@@ -102,7 +102,7 @@ class RegisterAccount extends Component
         $this->currentStep = 2;
     }
 
-    //  2 VERIFY OTP
+    //  step 2 VERIFY OTP
 
     public function verifyOtp()
     {
@@ -143,7 +143,7 @@ class RegisterAccount extends Component
         }
     }
 
-    // 3 sign in steps
+    // step 3 sign in steps
 public function registerUser()
     {
         if ($this->currentStep !== 3) {

@@ -79,20 +79,7 @@
                             style="display: none;">
 
                             <div class="p-1">
-                                {{-- <a href="{{ route('reports.viewpdf') }}" target="_blank"
-                                    class="group flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-lg">
-                                    <span class="text-lg"></span>
-                                    <span>(PDF)عرض تقرير</span>
-                                </a>
-
-                                <a href="{{ route('reports.generatepdf') }}"
-                                    class="group flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-lg">
-                                    <span class="text-lg"></span>
-                                    <span>(PDF)تحميل تقرير</span>
-                                </a> --}}
-
                                 <div class="my-1 border-t border-gray-100"></div>
-
                                 <button @click="$dispatch('triggerExcelModal'); open = false"
                                     class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-green-100 transition-colors rounded-lg text-right">
                                     <span class="text-lg"></span>
@@ -197,27 +184,21 @@
                     </svg>
                 </button>
 
-                <div x-show="openMobileReports" x-collapse class="bg-gray-800 rounded-md mt-1 overflow-hidden"
+               <div x-show="openMobileReports" x-collapse class="bg-gray-800 rounded-md mt-1 overflow-hidden"
                     style="display: none;">
                     <div class="px-2 py-2 space-y-1">
-                        <a href="{{ route('reports.viewpdf') }}" target="_blank"
-                            class="flex items-center gap-3 px-3 py-2 text-sm font-bold text-gray-300 hover:bg-gray-700 hover:text-white transition-colors rounded-md">
+                        <button @click="$dispatch('triggerExcelModal'); open = false"
+                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-gray-800 hover:bg-green-100 transition-colors rounded-lg text-right">
                             <span class="text-lg"></span>
-                            <span>(PDF) عرض تقرير</span>
-                        </a>
+                            <span>نقل إلى إكسل(Excel)</span>
+                        </button>
 
-                        <a href="{{ route('reports.generatepdf') }}"
-                            class="flex items-center gap-3 px-3 py-2 text-sm font-bold text-gray-300 hover:bg-gray-700 hover:text-white transition-colors rounded-md">
+                        <div class="my-1 border-t border-gray-600"></div>
+
+                        <button @click="$dispatch('triggerPdfModal'); open = false"
+                            class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-gray-800 hover:bg-red-100 transition-colors rounded-lg text-right">
                             <span class="text-lg"></span>
-                            <span>(PDF) تحميل تقرير</span>
-                        </a>
-
-                        <div class="my-1 border-t border-gray-700 mx-2"></div>
-
-                        <button @click="$dispatch('triggerExcelModal'); openMobileReports = false"
-                            class="w-full flex items-center gap-3 px-3 py-2 text-sm font-bold text-gray-300 hover:bg-gray-700 hover:text-white transition-colors rounded-md text-right">
-                            <span class="text-lg"></span>
-                            <span>(Excel) نقل إلى إكسل</span>
+                            <span>نقل إلى (PDF)</span>
                         </button>
                     </div>
                 </div>
