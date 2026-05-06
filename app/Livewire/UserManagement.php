@@ -27,6 +27,8 @@ class UserManagement extends Component
     public $showDetailsModal = false;
     public ?User $selectedUserDetails = null;
     public $company_name;
+    public $vat_number;
+    public $official_company_number;
     public $isCompanyLocked = false;
     public $search = '';
     public function updatingSearch()
@@ -79,7 +81,6 @@ class UserManagement extends Component
         $this->isSelf = ($user->id === Auth::id());
     }
 
-
     public function save()
     {
         if ($this->isEditing) {
@@ -111,7 +112,9 @@ class UserManagement extends Component
         $userData = [
             'name' => $this->name,
             'email' => $this->email,
-            'company_name' => $this->company_name,
+            'company_name' => auth()->user()->company_name,
+            'vat_number' => auth()->user()->vat_number,
+            'official_company_number' => auth()->user()->official_company_number,
         ];
 
         if (!$this->isEditing || $this->password) {

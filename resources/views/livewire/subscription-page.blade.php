@@ -44,9 +44,12 @@
 
             <thead class="bg-gray-800 text-white">
                 <tr>
-                    <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider">الإسم</th>
+                    <th class="p-4 text-sm font-bold uppercase tracking-wider">الإسم</th>
                     <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider">الشركة</th>
                     <th class="p-4 text-sm font-bold uppercase tracking-wider">البريد الإلكتروني</th>
+                    <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider"> رقم الجوال</th>
+                    <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider">  الرقم الموحد \ رقم السجل التجاري </th>
+                    <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider"> الرقم الضريبي (VAT)</th>
                 </tr>
             </thead>
 
@@ -63,7 +66,7 @@
                     <tr class="hover:bg-indigo-50 transition-colors duration-200 cursor-pointer">
 
                         {{-- Name Column with the Expand Button --}}
-                        <td class="hidden md:table-cell p-4 font-bold text-gray-800">
+                        <td class="p-4 font-bold text-gray-800">
                             <div class="flex items-center gap-3">
 
                                 {{-- The Expand Arrow Button --}}
@@ -87,13 +90,17 @@
                         {{-- Clicking these columns opens the modal --}}
                         <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->company_name }}</td>
                         <td wire:click="openDetails({{ $sub->id }})" class="p-4 text-sm text-indigo-600 font-mono">{{ $sub->email }}</td>
+                        <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 text-sm text-indigo-600 font-mono">{{ $sub->mobile_number }}</td>
+                        <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->official_company_number }}</td>
+                        <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->vat_number }}</td>
                     </tr>
 
                     {{-- THE CHILDREN / EMPLOYEES ROWS --}}
                     @foreach($children as $child)
                         {{-- 2. x-show: These rows are hidden until the arrow is clicked! --}}
-                        <tr x-show="expanded" x-cloak style="display: none;" class="bg-slate-50/80 hover:bg-slate-100 transition-colors duration-200 border-t border-slate-100">
-                            <td class="hidden md:table-cell p-4 font-semibold text-slate-600 pr-12 border-r-2 border-indigo-300">
+                        {{-- 1. Added wire:click and cursor-pointer to the row --}}
+                        <tr wire:click="openDetails({{ $child->id }})" x-show="expanded" x-cloak style="display: none;" class="bg-slate-50/80 hover:bg-slate-100 transition-colors duration-200 border-t border-slate-100 cursor-pointer">
+                            <td class="p-4 font-semibold text-slate-600 pr-12 border-r-2 border-indigo-300">
                                 <div class="flex items-center">
                                     <span class="text-indigo-400 font-black ml-2 text-lg">↳</span>
                                     {{ $child->name }}
@@ -102,6 +109,9 @@
                             </td>
                             <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->company_name ?? $sub->company_name }}</td>
                             <td class="p-4 text-sm text-slate-500 font-mono">{{ $child->email }}</td>
+                            <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->mobile_number }}</td>
+                            <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->official_company_number }}</td>
+                            <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->vat_number }}</td>
                         </tr>
                     @endforeach
 
@@ -149,9 +159,26 @@
 
                         <div>
                             <span class="block text-xs text-gray-400 font-bold mb-1">البريد الإلكتروني</span>
-                            <span
-                                class="text-indigo-600 font-mono bg-indigo-50 px-2 py-1 rounded">{{ $selectedSub->email }}</span>
+                            <span class="text-indigo-600 font-mono bg-indigo-50 px-2 py-1 rounded">{{ $selectedSub->email }}</span>
                         </div>
+
+                           <div>
+                            <span class="block text-xs text-gray-400 font-bold mb-1">  رقم الجوال</span>
+                            <span class="text-indigo-600 font-mono bg-indigo-50 px-2 py-1 rounded">{{ $selectedSub->mobile_number }}</span>
+                        </div>
+
+
+                         <div>
+                            <span class="block text-xs text-gray-400 font-bold mb-1">  الرقم الموحد \ رقم السجل التجاري </span>
+                            <span class="font-bold text-gray-800">{{ $selectedSub->official_company_number }}</span>
+                        </div>
+
+                         <div>
+                            <span class="block text-xs text-gray-400 font-bold mb-1"> الرقم الضريبي (VAT)</span>
+                            <span class="font-bold text-gray-800">{{ $selectedSub->vat_number }}</span>
+                        </div>
+
+
                     </div>
                 </div>
 

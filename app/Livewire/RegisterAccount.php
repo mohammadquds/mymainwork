@@ -20,6 +20,9 @@ class RegisterAccount extends Component
     public $sign_password;
     public $sign_password_confirmation;
     public $company_name;
+    public $vat_number;
+    public $official_company_number;
+
     public $mobile_number;
     public $isCompanyLocked = false;
 
@@ -141,12 +144,22 @@ class RegisterAccount extends Component
     }
 
     // 3 sign in steps
-       public function registerUser()
+public function registerUser()
     {
         if ($this->currentStep !== 3) {
             return;
         }
+        //  Find the Admin (if this is an invitation link)
+        $admin = null;
+        if ($this->admin_id) {
+            $admin = User::where('invite_code', $this->admin_id)->first();
+        }
 
+        if ($admin) {
+            $this->company_name = $admin->company_name;
+        }
+
+        //  Now it is safe to validate
         $this->validate([
             'name' => 'required|max:255',
             'company_name' => 'required|max:255',
@@ -154,38 +167,51 @@ class RegisterAccount extends Component
             'sign_password' => 'required|confirmed|min:8|max:255'
         ]);
 
-        $admin = null;
-        if ($this->admin_id) {
-            $admin = User::where('invite_code', $this->admin_id)->first();
-        }
-
         $startDate = null;
         $endDate = null;
         $status = 'active';
         $assignedBossId = null;
+
+        // Variables to hold the company details
+        $finalCompanyName = $this->company_name;
+        $finalVatNumber = null;
+        $finalOfficialNumber = null;
 
         if ($admin) {
             $startDate = $admin->start_date;
             $endDate = $admin->end_date;
             $status = $admin->status ?? 'active';
             $assignedBossId = $admin->id;
+
+            //  Force the hidden data directly from the Admin
+            $finalCompanyName = $admin->company_name;
+            $finalVatNumber = $admin->vat_number;
+            $finalOfficialNumber = $admin->official_company_number;
         } else {
+            // This is a brand new Admin registering themselves
             $startDate = now();
             $endDate = now()->addDays(3);
             $status = 'active';
             $assignedBossId = null;
+
+            // They will fill these out later in the Onboarding Popup!
+            $finalVatNumber = null;
+            $finalOfficialNumber = null;
         }
 
+        // Create the User using our secure $final variables
         $user = User::create([
             'name' => $this->name,
             'email' => session()->get('registration_email'),
-            'company_name' => $this->company_name,
             'mobile_number' => $this->mobile_number,
             'password' => Hash::make($this->sign_password),
             'admin_id' => $assignedBossId,
             'start_date' => $startDate,
             'end_date' => $endDate,
             'status' => $status,
+            'company_name' => $finalCompanyName,
+            'vat_number' =>  $finalVatNumber,
+            'official_company_number' => $finalOfficialNumber,
         ]);
 
         if ($assignedBossId === null) {
@@ -201,6 +227,8 @@ class RegisterAccount extends Component
 
         return redirect('/homePage');
     }
+
+
 
 // log in steps
     public function loginUser()

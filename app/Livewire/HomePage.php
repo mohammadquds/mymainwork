@@ -13,6 +13,7 @@ use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 
 
@@ -128,21 +129,40 @@ public function closeOnboardingModal()
         $this->showOnboardingModal = false;
     }
 
-public function saveCompanyDetails(){
+
+public function saveCompanyDetails()
+{
+    $user = Auth::user();
+
+    $companyUserIds = \App\Models\User::where('admin_id', $user->id)->pluck('id')->toArray();
+    $companyUserIds[] = $user->id;
+
     $this->validate([
-        'vat_number' => 'required|unique:users|max:20',
-        'official_company_number' => 'required|unique:users|max:20',
+        'vat_number' => [
+            'required',
+            'max:20',
+            Rule::unique('users')->whereNotIn('id', $companyUserIds)
+        ],
+        'official_company_number' => [
+            'required',
+            'max:20',
+            Rule::unique('users')->whereNotIn('id', $companyUserIds)
+        ],
     ]);
-$user= Auth::user();
 
-$user->update([
-    'vat_number' => $this->vat_number,
-    'official_company_number' => $this->official_company_number,
-]);
+    $user->update([
+        'vat_number' => $this->vat_number,
+        'official_company_number' => $this->official_company_number,
+    ]);
 
-$this->showOnboardingModal = false;
+    \App\Models\User::where('admin_id', $user->id)->update([
+        'vat_number' => $this->vat_number,
+        'official_company_number' => $this->official_company_number,
+    ]);
 
-session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح! يمكنك الآن بدء المبيعات.');
+    $this->showOnboardingModal = false;
+
+    session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح! يمكنك الآن بدء المبيعات.');
 }
 
 
@@ -379,14 +399,14 @@ session()->flash('message', 'تم اكتمال إعداد حسابك بنجاح!
                 });
             })
             ->groupBy('national_id')
-            ->orderBy('last_transaction', 'desc')
+            ->orderBy('last_transaction', 'asc')
             ->get();
 
         // 3. جلب العمليات لكل عميل وإضافتها له بشكل مباشر
         foreach ($clients as $client) {
             $client->orders = form::where('national_id', $client->national_id)
                 ->whereIn('user_id', $allowedIds)
-                ->orderBy('created_at', 'desc')
+                ->orderBy('created_at', 'asc')
                 ->get(); // جلب كافة العمليات التابعة لهذا العميل
         }
 
