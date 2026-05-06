@@ -89,38 +89,44 @@
                         </div>
                     </div>
                     {{-- عرض تحذيرات العميل  اسبوعي و شهري بنائا علي العمر--}}
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-col gap-1">
                         @php
-                            $customerAge = \Carbon\Carbon::parse($client->date_of_birth)->age;
+                            // التأكد من أن تاريخ الميلاد موجود وليس فارغاً قبل الحساب
+                            $dob = $client->date_of_birth;
+                            $customerAge = !empty($dob) ? \Carbon\Carbon::parse($dob)->age : null;
 
                             $ordersLast7Days = \App\Models\Form::where('national_id', $client->national_id)
                                 ->where('created_at', '>=', now()->subDays(7))
                                 ->count();
-
                             $ordersLast30Days = \App\Models\Form::where('national_id', $client->national_id)
                                 ->where('created_at', '>=', now()->subDays(30))
-                                ->count();
+                                ->count();    
                         @endphp
 
-                        @if($ordersLast7Days > 3  && $customerAge < 18)
+                        @if($customerAge !== null && $customerAge < 18 && $ordersLast7Days > 3)
                             <span class="bg-red-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
                                 تحذير: قاصر + عمليات مكثفة (اسبوعي)
                             </span>
-
-                        @elseif($ordersLast30Days > 3 && $customerAge < 18)
-                            <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-orange-700">
+                        @elseif($customerAge !== null && $customerAge < 18 && $ordersLast30Days > 5)
+                            <span class="bg-orange-500 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-yellow-600">
                                 تحذير: قاصر + عمليات مكثفة (شهري)
                             </span>
-                        @elseif($ordersLast7Days >= 3)
-                            <span class="bg-red-100 text-red-700 text-[10px] px-3 py-1 rounded-full font-black border border-red-200">
-                                تنبيه: عمليات مكثفة (اسبوعي)
-                            </span>
-                        @elseif($ordersLast30Days >= 3)
-                            <span class="bg-orange-100 text-orange-700 text-[10px] px-3 py-1 rounded-full font-black shadow-sm border border-orange-200">
-                                تنبيه: عمليات مكثفة (شهري)
-                            </span>
-                        @endif    
-                    </div>    
+                        @elseif($customerAge !== null && $ordersLast7Days > 3)
+                            <span class="bg-red-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
+                               عملات مكثفة (اسبوعي)
+                            </span> 
+                        @elseif($customerAge !== null && $ordersLast30Days > 5)
+                            <span class="bg-orange-500 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-yellow-600">
+                                عملات مكثفة (شهري)
+                            </span>   
+                        @endif
+
+                        {{-- عرض البيانات للتأكد (يمكنك حذفها لاحقاً) --}}
+                        <div class="text-[8px] text-gray-400">
+                            <p>تاريخ الميلاد في القاعدة: {{ $dob ?? 'غير متوفر' }}</p>
+                            <p>العمر المحسوب: {{ $customerAge ?? 'غير معروف' }}</p>
+                        </div>
+                    </div> 
                     <div class="flex items-center gap-3">
                         {{-- عرض عدد العمليات لهذا العميل --}}
                         @php

@@ -106,11 +106,11 @@ public function mount(){
     }
     public function duplicateSale($id)
     {
-        $this->authorize('user.edit');
         $sale = form::findOrFail($id);
         $newSale = $sale->replicate();
         $newSale->created_at = now();
         $newSale->updated_at = now();
+        $newSale->user_id = auth()->id();
         $newSale->save();
 
         session()->flash('message', 'تم تكرار السجل بنجاح.');
@@ -409,7 +409,20 @@ public function saveCompanyDetails()
                 ->orderBy('created_at', 'asc')
                 ->get(); // جلب كافة العمليات التابعة لهذا العميل
         }
-
+        $clients = \App\Models\Form::whereIn('user_id', $allowedIds)
+    ->select(
+        'national_id', 
+        \DB::raw('MAX(full_name) as full_name'), 
+        \DB::raw('MAX(date_of_birth) as date_of_birth'), // أضف هذا السطر لجلب تاريخ الميلاد
+        \DB::raw('MAX(created_at) as last_transaction')
+    )
+    ->when($this->search, function ($query) {
+        $query->where('full_name', 'like', '%' . $this->search . '%')
+              ->orWhere('national_id', 'like', '%' . $this->search . '%');
+    })
+    ->groupBy('national_id')
+    ->orderBy('last_transaction', 'desc')
+    ->get();
         return view('livewire.home-page', [
             'clients' => $clients
         ])->layout('layoutscreen.app');
