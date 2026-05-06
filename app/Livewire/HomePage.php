@@ -389,6 +389,9 @@ public function saveCompanyDetails()
         // 1. جلب المعرفات المسموح بها للمستخدم الحالي
         $allowedIds = $this->getAllowedUserIds();
 
+        $totalSales = form::whereIn('user_id', $allowedIds)->count();
+
+
         // 2. جلب قائمة العملاء الفريدين كـ Collection بسيطة
         $clients = form::whereIn('user_id', $allowedIds)
             ->select('national_id', \DB::raw('MAX(full_name) as full_name'), \DB::raw('MAX(created_at) as last_transaction'))
@@ -411,7 +414,8 @@ public function saveCompanyDetails()
         }
 
         return view('livewire.home-page', [
-            'clients' => $clients
+            'clients' => $clients,
+            'totalSales' => $totalSales,
         ])->layout('layoutscreen.app');
     }
 

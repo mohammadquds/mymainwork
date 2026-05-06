@@ -81,24 +81,22 @@
                                 @endif
                             </td>
 
-                            {{-- Target (Subject) --}}
+                        {{-- Target (Subject) --}}
                             <td class="py-4 px-6">
                                 <div class="text-sm font-bold text-slate-700">
-
-                                    {{-- UPDATE 2: Cleaned up the translation using the backend function --}}
                                     {{ $this->getModelArabicName($log->subject_type) }}
-
-                                    <span class="text-slate-400 font-normal">#{{ $log->subject_id }}</span>
+                                    <span class="text-slate-400 font-normal">#{{ $this->getSubjectIdentifier($log) }}</span>
                                 </div>
                             </td>
+
 
                             {{-- UPDATE  The brand new Details Column --}}
                             <td class="py-4 px-6 text-sm text-slate-600 leading-relaxed">
                                 @if($log->event === 'created')
                                     تمت إضافة {{ $this->getModelArabicName($log->subject_type) }} جديدة.
 
-                                @elseif($log->event === 'deleted')
-                                    تم حذف {{ $this->getModelArabicName($log->subject_type) }} رقم #{{ $log->subject_id }}.
+                               @elseif($log->event === 'deleted')
+                                    تم حذف {{ $this->getModelArabicName($log->subject_type) }} رقم #{{ $this->getSubjectIdentifier($log) }}.
 
                                 @elseif($log->event === 'updated')
                                     @php $changes = $this->getFormattedChanges($log); @endphp

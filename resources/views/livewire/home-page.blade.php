@@ -18,9 +18,6 @@
                     <span class="text-amber-600 font-bold">{{ $clients->count() }}</span>
                 </p>
 
-                @php
-                    $totalSales = \App\Models\Form::count();
-                @endphp
                 <p class="text-sm text-slate-500 font-medium mt-1">
                     إجمالي العمليات المسجلة:
                     <span class="text-amber-600 font-bold">{{ $totalSales }}</span>
@@ -76,7 +73,7 @@
     <div class="space-y-4" dir="rtl">
         @foreach($clients as $client)
             {{-- حاوية العميل --}}
-            <div wire:key="client-container-{{ $client->national_id }}" x-data="{ open: false }" class="bg-white border ...">
+            <div wire:key="client-container-{{ $client->national_id }}" x-data="{ open: false }" class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
                 {{-- سطر العميل الرئيسي --}}
                 <div @click="open = !open" class="p-5 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors">
                     <div class="flex items-center gap-4">
@@ -88,18 +85,17 @@
                             <p class="text-xs text-slate-400 font-mono">رقم الهوية: {{ $client->national_id }}</p>
                         </div>
                     </div>
-                    {{-- عرض تحذيرات العميل  اسبوعي و شهري بنائا علي العمر--}}
+
+                    {{-- عرض تحذيرات العميل --}}
                     <div class="flex items-center gap-3">
                         @php
-                            $customerAge = \Carbon\Carbon::parse($client->date_of_birth)->age;
+                            // Safely get DOB using null-safe operator
+                            $firstOrder = $client->orders->first();
+                            $dob = $firstOrder ? $firstOrder->date_of_birth : now();
+                            $customerAge = \Carbon\Carbon::parse($dob)->age;
 
-                            $ordersLast7Days = \App\Models\Form::where('national_id', $client->national_id)
-                                ->where('created_at', '>=', now()->subDays(7))
-                                ->count();
-
-                            $ordersLast30Days = \App\Models\Form::where('national_id', $client->national_id)
-                                ->where('created_at', '>=', now()->subDays(30))
-                                ->count();
+                            $ordersLast7Days = $client->orders->where('created_at', '>=', now()->subDays(7))->count();
+                            $ordersLast30Days = $client->orders->where('created_at', '>=', now()->subDays(30))->count();
                         @endphp
 
                         @if($ordersLast7Days > 3  && $customerAge < 18)
@@ -119,28 +115,22 @@
                             <span class="bg-orange-100 text-orange-700 text-[10px] px-3 py-1 rounded-full font-black shadow-sm border border-orange-200">
                                 تنبيه: عمليات مكثفة (شهري)
                             </span>
-                        @endif    
-                    </div>    
+                        @endif
+                    </div>
+
                     <div class="flex items-center gap-3">
-                        {{-- عرض عدد العمليات لهذا العميل --}}
-                        @php
-                            $orderCount = \App\Models\Form::where('national_id', $client->national_id)->count();
-                        @endphp
                         <span class="bg-amber-100 text-amber-700 text-[10px] px-3 py-1 rounded-full font-black">
-                            {{ $orderCount }} عمليات
+                            {{ $client->orders->count() }} عمليات
                         </span>
                         <svg class="w-5 h-5 text-slate-400 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </div>
                 </div>
-{{-- قائمة العمليات التفصيلية (تظهر عند الضغط) --}}
-                <div x-show="open" x-collapse class="bg-slate-50/50 border-t border-slate-100 p-4 space-y-3">
-                    @php
-                        $clients = \App\Models\Form::where('national_id', $client->national_id)->latest()->get();
-                    @endphp
 
-                    @foreach($clients as $sale)
+                {{-- قائمة العمليات التفصيلية (تظهر عند الضغط) --}}
+                <div x-show="open" x-collapse class="bg-slate-50/50 border-t border-slate-100 p-4 space-y-3">
+                    @foreach($client->orders as $sale)
                         <div wire:click="openDetails({{ $sale->id }})" class="cursor-pointer flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 hover:border-amber-300 transition-all shadow-sm">
                             <div class="flex items-center gap-3">
                                 <div class="w-1 h-10 bg-amber-400 rounded-full"></div>
@@ -192,9 +182,6 @@
                 </div>
             </div>
         @endforeach
-        {{-- <div class="pt-2">
-            {{ $clients->links() }}
-        </div>     --}}
     </div>
 
     {{-- زر التعديل --}}
@@ -544,7 +531,6 @@
                                     class="text-[10px] bg-amber-50 text-amber-600 px-2 py-1 rounded font-bold border border-amber-100">عرض
                                     الصورة</button>
 
-                                {{-- THE FIX: Removed x-teleport to stop the massive Livewire memory leak --}}
                                 <div x-show="showImageModal" style="display: none;"
                                     class="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/90 p-4">
                                     <div class="relative bg-white p-2 rounded-xl shadow-2xl"
@@ -585,15 +571,14 @@
                         </div>
                     </div>
 
-                
-
+                  
                 </div>
 
                 {{--FOOTER --}}
                 <div class="bg-white p-3 sm:p-4 flex gap-2 sm:gap-3 items-center border-t border-slate-200 z-20">
                     <button wire:click="closeModal"
                         class="flex-1 bg-slate-100 text-slate-700 py-2.5 rounded-lg text-sm font-bold border border-slate-200 shadow-sm hover:bg-slate-200 transition-colors">إغلاق</button>
-                    {{-- Changed from a <button> to an <a> tag. target="_blank" guarantees it opens in a new tab --}}
+
                             <a href="{{ route('invoice.pdf', $selectedSale->id) }}" target="_blank"
                                 class="flex-1 bg-slate-900 text-amber-400 py-2.5 rounded-lg text-sm font-bold flex justify-center items-center gap-1.5 shadow-md hover:bg-black transition-colors">
                                 <svg style="width: 16px; height: 16px; flex-shrink: 0;" fill="none" stroke="currentColor"
