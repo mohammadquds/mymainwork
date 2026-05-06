@@ -42,8 +42,8 @@
     <div class="bg-white shadow-sm border border-slate-200 rounded-2xl overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-right border-collapse">
-                <thead>
-                    <tr class="bg-slate-50 border-b border-slate-200">
+                <thead class="bg-slate-100 border-b border-slate-200">
+                    <tr>
                         <th class="py-4 px-6 text-sm font-bold text-slate-700">المستخدم</th>
                         <th class="py-4 px-6 text-sm font-bold text-slate-700">الإجراء</th>
                         <th class="py-4 px-6 text-sm font-bold text-slate-700">القسم / السجل</th>

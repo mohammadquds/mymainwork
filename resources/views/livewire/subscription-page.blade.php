@@ -39,91 +39,93 @@
     </div>
 
     {{-- subscriptions LIST --}}
-    <div class="w-full bg-white shadow-2xl rounded-3xl overflow-x-auto border border-gray-100">
-        <table class="w-full text-right border-collapse whitespace-nowrap" dir="rtl">
+    <div class="bg-white shadow-sm border border-slate-200 rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-right border-collapse">
 
-            <thead class="bg-gray-800 text-white">
-                <tr>
-                    <th class="p-4 text-sm font-bold uppercase tracking-wider">الإسم</th>
-                    <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider">الشركة</th>
-                    <th class="p-4 text-sm font-bold uppercase tracking-wider">البريد الإلكتروني</th>
-                    <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider"> رقم الجوال</th>
-                    <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider">  الرقم الموحد \ رقم السجل التجاري </th>
-                    <th class="hidden md:table-cell p-4 text-sm font-bold uppercase tracking-wider"> الرقم الضريبي (VAT)</th>
-                </tr>
-            </thead>
-
-            {{-- LOOP STARTS HERE --}}
-            @forelse($subscriptions as $sub)
-             @php
-                    $children = $sub->children;
-                @endphp
-
-                {{-- 1. NEW TBODY WRAPPER: Each Admin gets their own tbody to control the Alpine state --}}
-                <tbody x-data="{ expanded: false }" class="border-b border-gray-100 last:border-0">
-
-                    {{-- THE MAIN ADMIN / BOSS ROW --}}
-                    <tr class="hover:bg-indigo-50 transition-colors duration-200 cursor-pointer">
-
-                        {{-- Name Column with the Expand Button --}}
-                        <td class="p-4 font-bold text-gray-800">
-                            <div class="flex items-center gap-3">
-
-                                {{-- The Expand Arrow Button --}}
-                                @if($children && $children->count() > 0)                                    {{-- @click.stop prevents the modal from opening when you click the arrow --}}
-                                    <button @click.stop="expanded = !expanded"
-                                            class="p-1 rounded-full bg-slate-100 text-slate-500 hover:bg-indigo-100 hover:text-indigo-600 transition-all border border-slate-200 shadow-sm">
-                                        <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </button>
-                                @else
-                                    {{-- Empty space to keep names perfectly aligned if they have no employees --}}
-                                    <div class="w-6 h-6"></div>
-                                @endif
-
-                                {{-- Clicking the name opens the modal --}}
-                                <span wire:click="openDetails({{ $sub->id }})" class="hover:text-indigo-600 transition-colors">{{ $sub->name }}</span>
-                            </div>
-                        </td>
-
-                        {{-- Clicking these columns opens the modal --}}
-                        <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->company_name }}</td>
-                        <td wire:click="openDetails({{ $sub->id }})" class="p-4 text-sm text-indigo-600 font-mono">{{ $sub->email }}</td>
-                        <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 text-sm text-indigo-600 font-mono">{{ $sub->mobile_number }}</td>
-                        <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->official_company_number }}</td>
-                        <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->vat_number }}</td>
+                <thead class="bg-slate-100 border-b border-slate-200">
+                    <tr>
+                        <th class="py-4 px-6 text-sm font-bold text-slate-700">الإسم</th>
+                        <th class="hidden md:table-cell py-4 px-6 text-sm font-bold text-slate-700">الشركة</th>
+                        <th class="py-4 px-6 text-sm font-bold text-slate-700">البريد الإلكتروني</th>
+                        <th class="hidden md:table-cell py-4 px-6 text-sm font-bold text-slate-700"> رقم الجوال</th>
+                        <th class="hidden md:table-cell py-4 px-6 text-sm font-bold text-slate-700">  الرقم الموحد \ رقم السجل التجاري </th>
+                        <th class="hidden md:table-cell py-4 px-6 text-sm font-bold text-slate-700"> الرقم الضريبي (VAT)</th>
                     </tr>
+                </thead>
 
-                    {{-- THE CHILDREN / EMPLOYEES ROWS --}}
-                    @foreach($children as $child)
-                        {{-- 2. x-show: These rows are hidden until the arrow is clicked! --}}
-                        {{-- 1. Added wire:click and cursor-pointer to the row --}}
-                        <tr wire:click="openDetails({{ $child->id }})" x-show="expanded" x-cloak style="display: none;" class="bg-slate-50/80 hover:bg-slate-100 transition-colors duration-200 border-t border-slate-100 cursor-pointer">
-                            <td class="p-4 font-semibold text-slate-600 pr-12 border-r-2 border-indigo-300">
-                                <div class="flex items-center">
-                                    <span class="text-indigo-400 font-black ml-2 text-lg">↳</span>
-                                    {{ $child->name }}
-                                    <span class="text-[10px] bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-full mr-3 font-bold shadow-sm">موظف</span>
+                {{-- LOOP STARTS HERE --}}
+                @forelse($subscriptions as $sub)
+                @php
+                        $children = $sub->children;
+                    @endphp
+
+                    {{-- 1. NEW TBODY WRAPPER: Each Admin gets their own tbody to control the Alpine state --}}
+                    <tbody x-data="{ expanded: false }" class="border-b border-gray-100 last:border-0">
+
+                        {{-- THE MAIN ADMIN / BOSS ROW --}}
+                        <tr class="hover:bg-indigo-50 transition-colors duration-200 cursor-pointer">
+
+                            {{-- Name Column with the Expand Button --}}
+                            <td class="p-4 font-bold text-gray-800">
+                                <div class="flex items-center gap-3">
+
+                                    {{-- The Expand Arrow Button --}}
+                                    @if($children && $children->count() > 0)                                    {{-- @click.stop prevents the modal from opening when you click the arrow --}}
+                                        <button @click.stop="expanded = !expanded"
+                                                class="p-1 rounded-full bg-slate-100 text-slate-500 hover:bg-indigo-100 hover:text-indigo-600 transition-all border border-slate-200 shadow-sm">
+                                            <svg :class="{'rotate-180': expanded}" class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                            </svg>
+                                        </button>
+                                    @else
+                                        {{-- Empty space to keep names perfectly aligned if they have no employees --}}
+                                        <div class="w-6 h-6"></div>
+                                    @endif
+
+                                    {{-- Clicking the name opens the modal --}}
+                                    <span wire:click="openDetails({{ $sub->id }})" class="hover:text-indigo-600 transition-colors">{{ $sub->name }}</span>
                                 </div>
                             </td>
-                            <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->company_name ?? $sub->company_name }}</td>
-                            <td class="p-4 text-sm text-slate-500 font-mono">{{ $child->email }}</td>
-                            <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->mobile_number }}</td>
-                            <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->official_company_number }}</td>
-                            <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->vat_number }}</td>
-                        </tr>
-                    @endforeach
 
-                </tbody>
-            @empty
-                <tbody>
-                    <tr>
-                        <td colspan="3" class="p-10 text-center text-gray-400 font-bold">لا توجد اشتراكات مسجلة حالياً.</td>
-                    </tr>
-                </tbody>
-            @endforelse
-        </table>
+                            {{-- Clicking these columns opens the modal --}}
+                            <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->company_name }}</td>
+                            <td wire:click="openDetails({{ $sub->id }})" class="p-4 text-sm text-indigo-600 font-mono">{{ $sub->email }}</td>
+                            <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 text-sm text-indigo-600 font-mono">{{ $sub->mobile_number }}</td>
+                            <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->official_company_number }}</td>
+                            <td wire:click="openDetails({{ $sub->id }})" class="hidden md:table-cell p-4 font-bold text-gray-800">{{ $sub->vat_number }}</td>
+                        </tr>
+
+                        {{-- THE CHILDREN / EMPLOYEES ROWS --}}
+                        @foreach($children as $child)
+                            {{-- 2. x-show: These rows are hidden until the arrow is clicked! --}}
+                            {{-- 1. Added wire:click and cursor-pointer to the row --}}
+                            <tr wire:click="openDetails({{ $child->id }})" x-show="expanded" x-cloak style="display: none;" class="bg-slate-50/80 hover:bg-slate-100 transition-colors duration-200 border-t border-slate-100 cursor-pointer">
+                                <td class="p-4 font-semibold text-slate-600 pr-12 border-r-2 border-indigo-300">
+                                    <div class="flex items-center">
+                                        <span class="text-indigo-400 font-black ml-2 text-lg">↳</span>
+                                        {{ $child->name }}
+                                        <span class="text-[10px] bg-white border border-slate-200 text-slate-600 px-2 py-0.5 rounded-full mr-3 font-bold shadow-sm">موظف</span>
+                                    </div>
+                                </td>
+                                <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->company_name ?? $sub->company_name }}</td>
+                                <td class="p-4 text-sm text-slate-500 font-mono">{{ $child->email }}</td>
+                                <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->mobile_number }}</td>
+                                <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->official_company_number }}</td>
+                                <td class="hidden md:table-cell p-4 text-slate-500 text-sm">{{ $child->vat_number }}</td>
+                            </tr>
+                        @endforeach
+
+                    </tbody>
+                @empty
+                    <tbody>
+                        <tr>
+                            <td colspan="3" class="p-10 text-center text-gray-400 font-bold">لا توجد اشتراكات مسجلة حالياً.</td>
+                        </tr>
+                    </tbody>
+                @endforelse
+            </table>
+        </div>
     </div>
 
     <div class="mt-6 px-2">
