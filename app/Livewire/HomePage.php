@@ -389,12 +389,17 @@ public function saveCompanyDetails()
         // 1. جلب المعرفات المسموح بها للمستخدم الحالي
         $allowedIds = $this->getAllowedUserIds();
 
-        $totalSales = form::whereIn('user_id', $allowedIds)->count();
+        // حساب إجمالي المبيعات
+        $totalSales = \App\Models\Form::whereIn('user_id', $allowedIds)->count();
 
-
-        // 2. جلب قائمة العملاء الفريدين كـ Collection بسيطة
-        $clients = form::whereIn('user_id', $allowedIds)
-            ->select('national_id', \DB::raw('MAX(full_name) as full_name'), \DB::raw('MAX(created_at) as last_transaction'))
+        // 2. جلب قائمة العملاء الفريدين (مرة واحدة وبكل البيانات المطلوبة)
+        $clients = \App\Models\Form::whereIn('user_id', $allowedIds)
+            ->select(
+                'national_id', 
+                \DB::raw('MAX(full_name) as full_name'), 
+                \DB::raw('MAX(date_of_birth) as date_of_birth'), 
+                \DB::raw('MAX(created_at) as last_transaction')
+            )
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('full_name', 'like', '%' . $this->search . '%')
@@ -402,30 +407,17 @@ public function saveCompanyDetails()
                 });
             })
             ->groupBy('national_id')
-            ->orderBy('last_transaction', 'asc')
+            ->orderBy('last_transaction', 'desc')
             ->get();
 
-        // 3. جلب العمليات لكل عميل وإضافتها له بشكل مباشر
+        // 3. جلب العمليات لكل عميل وإضافتها له (هذا الجزء يمنع خطأ null)
         foreach ($clients as $client) {
-            $client->orders = form::where('national_id', $client->national_id)
+            $client->orders = \App\Models\Form::where('national_id', $client->national_id)
                 ->whereIn('user_id', $allowedIds)
-                ->orderBy('created_at', 'asc')
-                ->get(); // جلب كافة العمليات التابعة لهذا العميل
+                ->orderBy('created_at', 'desc')
+                ->get(); // نضمن هنا أن orders لن تكون null أبداً
         }
-        $clients = \App\Models\Form::whereIn('user_id', $allowedIds)
-    ->select(
-        'national_id', 
-        \DB::raw('MAX(full_name) as full_name'), 
-        \DB::raw('MAX(date_of_birth) as date_of_birth'), // أضف هذا السطر لجلب تاريخ الميلاد
-        \DB::raw('MAX(created_at) as last_transaction')
-    )
-    ->when($this->search, function ($query) {
-        $query->where('full_name', 'like', '%' . $this->search . '%')
-              ->orWhere('national_id', 'like', '%' . $this->search . '%');
-    })
-    ->groupBy('national_id')
-    ->orderBy('last_transaction', 'desc')
-    ->get();
+
         return view('livewire.home-page', [
             'clients' => $clients,
             'totalSales' => $totalSales,
