@@ -29,6 +29,28 @@ class ActivityLogViewer extends Component
         return $map[$modelName] ?? $modelName;
     }
 
+
+    public function getSubjectIdentifier($log) {
+        if(class_basename($log->subject_type) === 'form'){
+
+        if($log->subject && isset($log->subject->invoice_number)){
+            return $log->subject->invoice_number;
+        }
+    $properties = $log->properties;
+
+    if(isset($properties['attributes']['invoice_number'])){
+        return $properties['attributes']['invoice_number'];
+    }
+
+     if(isset($properties['old']['invoice_number'])){
+        return $properties['old']['invoice_number'];
+    }
+
+        }
+
+        return $log->subject_id;
+    }
+
     public function getFormattedChanges($log)
     {
         if ($log->event !== 'updated') {
@@ -121,7 +143,7 @@ class ActivityLogViewer extends Component
 
                 });
             }
-            
+
 
         $logs = $query->paginate(15);
 
