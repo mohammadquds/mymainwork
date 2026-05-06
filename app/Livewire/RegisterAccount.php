@@ -94,7 +94,7 @@ class RegisterAccount extends Component
 
 
         // otp for email
-        Mail::raw("رمز التحقق : {$otp}", function($msg) {
+        Mail::raw("رمز التحقق للدخول : {$otp}", function($msg) {
             $msg->to($this->sign_email)->subject('Verification Code');
         });
 
