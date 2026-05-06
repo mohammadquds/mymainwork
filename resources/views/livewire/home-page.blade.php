@@ -85,9 +85,8 @@
                             <p class="text-xs text-slate-400 font-mono">رقم الهوية: {{ $client->national_id }}</p>
                         </div>
                     </div>
-
                     {{-- عرض تحذيرات العميل --}}
-                    <div class="flex flex-col gap-1">
+                    <div class="flex flex-col gap-1 items-start">
                         @php
                             // التأكد من أن تاريخ الميلاد موجود وليس فارغاً قبل الحساب
                             $dob = $client->date_of_birth;
@@ -103,7 +102,7 @@
 
                         @if($customerAge !== null && $customerAge < 18 && $ordersLast7Days > 3)
                             <span class="bg-red-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
-                                تحذير: قاصر + عمليات مكثفة (اسبوعي)
+                                    قاصر + عمليات مكثفة (اسبوعي)
                             </span>
                             <div class="text-[8px] text-gray-400">
                                 <p>تاريخ الميلاد  : {{ $dob ? \Carbon\Carbon::parse($dob)->format('Y-m-d') : 'غير متوفر' }}</p>
@@ -111,7 +110,7 @@
                             </div>
                         @elseif($customerAge !== null && $customerAge < 18 && $ordersLast30Days > 5)
                             <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
-                                تحذير: قاصر + عمليات مكثفة (شهري)
+                                    قاصر + عمليات مكثفة (شهري)
                             </span>
                             <div class="text-[8px] text-gray-400">
                                 <p>تاريخ الميلاد  : {{ $dob ? \Carbon\Carbon::parse($dob)->format('Y-m-d') : 'غير متوفر' }}</p>
@@ -119,11 +118,11 @@
                             </div>
                         @elseif($customerAge !== null && $ordersLast7Days > 3)
                             <span class="bg-red-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
-                                تحذير: عمليات مكثفة (اسبوعي)
+                                    عمليات مكثفة (اسبوعي)
                             </span> 
                         @elseif($customerAge !== null && $ordersLast30Days > 5)
                             <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
-                                تحذير: عمليات مكثفة (شهري)
+                                    عمليات مكثفة (شهري)
                             </span>
                         @endif
                     </div>
