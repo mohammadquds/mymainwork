@@ -390,14 +390,14 @@ public function saveCompanyDetails()
         $allowedIds = $this->getAllowedUserIds();
 
         // حساب إجمالي المبيعات
-        $totalSales = \App\Models\Form::whereIn('user_id', $allowedIds)->count();
+        $totalSales = \App\Models\form::whereIn('user_id', $allowedIds)->count();
 
         // 2. جلب قائمة العملاء الفريدين (مرة واحدة وبكل البيانات المطلوبة)
-        $clients = \App\Models\Form::whereIn('user_id', $allowedIds)
+        $clients = \App\Models\form::whereIn('user_id', $allowedIds)
             ->select(
-                'national_id', 
-                \DB::raw('MAX(full_name) as full_name'), 
-                \DB::raw('MAX(date_of_birth) as date_of_birth'), 
+                'national_id',
+                \DB::raw('MAX(full_name) as full_name'),
+                \DB::raw('MAX(date_of_birth) as date_of_birth'),
                 \DB::raw('MAX(created_at) as last_transaction')
             )
             ->when($this->search, function ($query) {
@@ -412,7 +412,7 @@ public function saveCompanyDetails()
 
         // 3. جلب العمليات لكل عميل وإضافتها له (هذا الجزء يمنع خطأ null)
         foreach ($clients as $client) {
-            $client->orders = \App\Models\Form::where('national_id', $client->national_id)
+            $client->orders = \App\Models\form::where('national_id', $client->national_id)
                 ->whereIn('user_id', $allowedIds)
                 ->orderBy('created_at', 'desc')
                 ->get(); // نضمن هنا أن orders لن تكون null أبداً

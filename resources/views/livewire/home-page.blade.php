@@ -92,12 +92,12 @@
                             $dob = $client->date_of_birth;
                             $customerAge = !empty($dob) ? \Carbon\Carbon::parse($dob)->age : null;
 
-                            $ordersLast7Days = \App\Models\Form::where('national_id', $client->national_id)
+                            $ordersLast7Days = \App\Models\form::where('national_id', $client->national_id)
                                 ->where('created_at', '>=', now()->subDays(7))
                                 ->count();
-                            $ordersLast30Days = \App\Models\Form::where('national_id', $client->national_id)
+                            $ordersLast30Days = \App\Models\form::where('national_id', $client->national_id)
                                 ->where('created_at', '>=', now()->subDays(30))
-                                ->count();    
+                                ->count();
                         @endphp
 
                         @if($customerAge !== null && $customerAge < 18 && $ordersLast7Days > 3)
@@ -119,7 +119,7 @@
                         @elseif($customerAge !== null && $ordersLast7Days > 3)
                             <span class="bg-red-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
                                     عمليات مكثفة (اسبوعي)
-                            </span> 
+                            </span>
                         @elseif($customerAge !== null && $ordersLast30Days > 5)
                             <span class="bg-orange-600 text-white text-[10px] px-3 py-1 rounded-full font-black shadow-md border border-red-700">
                                     عمليات مكثفة (شهري)
@@ -580,7 +580,7 @@
                         </div>
                     </div>
 
-                  
+
                 </div>
 
                 {{--FOOTER --}}
