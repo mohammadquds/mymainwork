@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class NavBar extends Component
 {
-// the nav bar 
+// the nav bar new comment
     public function logout()
     {
         Auth::guard('web')->logout();
